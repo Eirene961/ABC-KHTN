@@ -1,7 +1,9 @@
-#include <iostream>
+#include "Console.h"
+#include "Snake.h"
+
 
 int main()
 {
-	std::cout << "Hello world";
+	SetConsoleWindow(1024, 512);
 	return 0;
 }
