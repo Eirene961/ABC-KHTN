@@ -142,8 +142,7 @@ void fillRect(int x, int y, int w, int h, int color) {
 }
 
 //Vẽ chữ từ file txt từ điểm (x,y)
-void drawTextFromFileTXT(const char* filename, int x, int y, int color)
-{
+void drawTextFromFileTXT(const char* filename, int x, int y, int color) {
     fstream fin; fin.open(filename);
     if (!fin.is_open()) return;
 
@@ -151,19 +150,16 @@ void drawTextFromFileTXT(const char* filename, int x, int y, int color)
 
     int _x = x, _y = y;
     char c;
-    while (!fin.eof())
-    {
+    while (!fin.eof()) {
         fin.get(c);
-        if (c == 'z')
-        {
+        if (c == 'z') {
             gotoXY(_x++, _y);
             cout << " ";
         }
         else if (c == ' ') {
             _x++;
         }
-        else if (c == '\n')
-        {
+        else if (c == '\n') {
             _y++;
             _x = x;
         }
