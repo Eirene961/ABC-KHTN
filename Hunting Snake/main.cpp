@@ -1,9 +1,8 @@
-#include "Console.h"
-#include "Snake.h"
+#include "Game.h"
 
 
 int main()
 {
-	SetConsoleWindow(1024, 512);
+	StartGame();
 	return 0;
 }

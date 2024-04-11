@@ -45,3 +45,19 @@ void HideCursor()
 	cursorInfo.bVisible = false;
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
+
+void CloseConsole()
+{
+	HWND hWndConsole = GetConsoleWindow();
+	if (hWndConsole != NULL) {
+		SendMessage(hWndConsole, WM_CLOSE, 0, 0);
+	}
+}
+
+void GotoXY(int x, int y)
+{
+	COORD coord;
+	coord.X = x;
+	coord.Y = y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}

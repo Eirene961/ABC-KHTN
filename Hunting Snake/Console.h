@@ -10,5 +10,8 @@ void SetConsoleWindow(int width, int height);
 void MoveWindow(int posX, int poxY);
 void MoveCenter();
 void HideCursor();
+void CloseConsole();
+void GotoXY(int x, int y);
+
 
 #endif
