@@ -1,11 +1,12 @@
 #include <iostream>
 #include<conio.h>
 #include "console.h"
+#include<ctime>
 #define BACKGROUNDCOLOR 124
 #define TEXTCOLOR 121
 using namespace std;
 typedef char str[31];
-str nut[5] = { "Start", "Instruction", "Introduction", "Continue", "Exit" };
+str nut[5] = { "Start new game", "Instruction", "Introduction", "Continue", "Exit" };
 
 enum TRANGTHAI { UP, DOWN, LEFT, RIGHT, ENTER, BACK };
 
@@ -27,6 +28,8 @@ TRANGTHAI key(int z) {
 
 	return BACK; // default return value when z is neither 224 nor 13
 }
+
+
 
 int menu(str nut[5], int n) {
 	int tt = 0;
@@ -96,9 +99,11 @@ int menu(str nut[5], int n) {
 		gotoXY(x_tua_game, y++);
 		cout << "/  \\__$$ |$$ |  $$ |/$$$$$$$ |$$$$$$  \ $$$$$$$$/ ";
 		gotoXY(x_tua_game, y++);
-		cout << "$$    $$/ $$ |  $$ |$$    $$ |$$ | $$  |$$       |";
+		cout << "$$    $$/ $$ |  $$ |$$    $$ |$$ | $$  |$$_______ |";
 		gotoXY(x_tua_game + 1, y++);
-		cout << "$$$$$$ / $$ /  $$ / $$$$$$$ /$$ / $$ / $$$$$$$ /";
+		cout << "$$$$$$ / $$ /  $$ / $$$$$$$ /$$ /  $$ / $$$$$$$ /";
+		gotoXY(x_tua_game + 10, y++);
+		cout << "by FiveMember";
 		for (int i = 0; i < n; i++) {
 			TextColor(mau[i]);
 			gotoXY(55, 20 + 2 * i);
