@@ -1,8 +1,10 @@
 #include "Game.h"
 
 
-int main()
-{
-	std::cout << "Hello world";
-	return 0;
+int main() {
+    system("color 70");
+
+    StartGame();
+
+    return 0;
 }

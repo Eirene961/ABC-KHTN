@@ -9,10 +9,10 @@
 using namespace std;
 
 
-#define WIDTHMAP (int)101
-#define HEIGHTMAP (int)26
-#define CornerX (int)6
-#define CornerY (int)10
+#define WIDTHMAP 101
+#define HEIGHTMAP 26
+#define CornerX 6
+#define CornerY 10
 
 enum Direction { STOP, UP, DOWN, LEFT, RIGHT };
 struct Point { int x, y; };
@@ -78,7 +78,7 @@ struct Snake
 			pos.y++;
 			break;
 		}
-		
+
 		if (pos.x < CornerX || pos.x >= CornerX + WIDTHMAP || pos.y < CornerY || pos.y >= CornerY + HEIGHTMAP)
 			dead = true;
 		for (int i = 1; i < tail.size() - 1; i++) {

@@ -4,6 +4,7 @@
 
 #include <time.h>
 #include "Console.h"
+#include "Menu.h"
 #include "Snake.h"
 
 
@@ -36,6 +37,7 @@ struct Game
 		}
 	}
 	void DrawMap() {
+		TextColor(Blue);
 		system("cls");
 		HideCursor();
 		GotoXY(CornerX - 1, CornerY - 1);
@@ -53,13 +55,17 @@ struct Game
 	}
 	void DrawSnakeAndFruit() {
 		GotoXY(fruit->pos.x, fruit->pos.y);
-		cout << "F";
+		TextColor(rand() % 9 + 8);
+		cout << char(4);
+		TextColor(Blue);
 		for (int i = 0; i < snake->tail.size() - 1; i++) {
 			GotoXY(snake->tail[i].x, snake->tail[i].y);
-			cout << snake->cell[i];
+			cout << (snake->cell[i] - '0') % snake->cell.size();
 		}
 		GotoXY(snake->tail.back().x, snake->tail.back().y);
 		cout << " ";
+		GotoXY(0, 0);
+		cout << "Score: " << score;
 	}
 };
 void StartGame();
