@@ -61,3 +61,31 @@ void GotoXY(int x, int y)
 	coord.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+
+void SetCellSize(int x, int y)
+{
+	CONSOLE_FONT_INFOEX cf = { 0 };
+	cf.cbSize = sizeof cf;
+	cf.dwFontSize.X = x;
+	cf.dwFontSize.Y = y;
+	wcscpy_s(cf.FaceName, L"Terminal");
+	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), 0, &cf);
+}
+
+void TextColor(int color)
+{
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(hConsole, &csbi);
+	WORD wAttributes = (csbi.wAttributes & 0xFFF0) | (color & 0x000F);
+	SetConsoleTextAttribute(hConsole, wAttributes);
+}
+
+void BackgroundColor(int color)
+{
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(hConsole, &csbi);
+	WORD wAttributes = (csbi.wAttributes & 0xFF0F) | ((color << 4) & 0x00F0);
+	SetConsoleTextAttribute(hConsole, wAttributes);
+}

@@ -12,6 +12,9 @@ void MoveCenter();
 void HideCursor();
 void CloseConsole();
 void GotoXY(int x, int y);
+void SetCellSize(int x, int y);
+void TextColor(int color);
+void BackgroundColor(int color);
 
 
 #endif
