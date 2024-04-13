@@ -38,30 +38,18 @@ struct Game
 	void DrawMap() {
 		system("cls");
 		HideCursor();
-		for (int i = 0; i < CornerY - 2; i++)
-			cout << endl;
-		for (int i = 0; i < WIDTHMAP + 7; i++) {
-			if (i < 4)
-				cout << " ";
-			else
-				cout << char(220);
-		}
-		cout << endl;
+		GotoXY(CornerX - 1, CornerY - 1);
+		for (int i = 0; i < WIDTHMAP + 2; i++)
+			cout << char(220);
 		for (int i = 0; i < HEIGHTMAP; i++) {
-			for (int j = 0; j < WIDTHMAP + 7; j++) {
-				if (j == 4 || j == WIDTHMAP + 6)
-					cout << char(219);
-				else
-					cout << " ";
-			}
-			cout << endl;
+			GotoXY(CornerX - 1, CornerY + i);
+			cout << char(219);
+			GotoXY(CornerX + WIDTHMAP, CornerY + i);
+			cout << char(219);
 		}
-		for (int i = 0; i < WIDTHMAP + 7; i++) {
-			if (i < 4)
-				cout << " ";
-			else
-				cout << char(223);
-		}
+		GotoXY(CornerX - 1, CornerY + HEIGHTMAP);
+		for (int i = 0; i < WIDTHMAP + 2; i++)
+			cout << char(223);
 	}
 	void DrawSnakeAndFruit() {
 		GotoXY(fruit->pos.x, fruit->pos.y);
