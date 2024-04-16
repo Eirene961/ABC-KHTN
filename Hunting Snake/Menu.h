@@ -30,7 +30,11 @@ using namespace std;
 #define BACKGROUNDCOLOR		124
 #define TEXTCOLOR			121
 
-bool Menu();
+void Rank();
+void About();
+void Instruction();
+void Setting();
+void Menu();
 
 
 //Status Key(int z);

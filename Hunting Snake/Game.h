@@ -10,63 +10,40 @@
 
 #define WIDTHCONSOLE 1280
 #define HEIGHTCONSOLE 704
+#define Target_lv1 30
+#define Target_lv2 100
 
-void Level_01(Snake*& snake);
+int Level_01(Snake*& snake);
+bool DrawLevel_01(Snake*& snake);
+int Level_02(Snake*& snake);
 struct Game
 {
 	Snake* snake;
 	Fruit* fruit;
 	int score;
+	int target;
+	bool gate;
+	Point posGate;
 
 	Game() {
 		snake = new Snake;
 		fruit = new Fruit;
 		score = 0;
+		target = 0;
+		gate = false;
+		posGate = { 0, 1 };
 	}
-	void InputLevel(void(*Level)(Snake*&)) {
-		Level(snake);
-		fruit->RandomFruit();
+	~Game() {
+		delete snake;
+		delete fruit;
 	}
-	void Logic() {
-		if (snake->pos.x == fruit->pos.x && snake->pos.y == fruit->pos.y) {
-			score += 10;
-			snake->tail.push_back(snake->pos);
-			do {
-				fruit->RandomFruit();
-			} while (CheckFruit(snake->tail, fruit->pos));
-		}
-	}
-	void DrawMap() {
-		TextColor(Blue);
-		system("cls");
-		HideCursor();
-		GotoXY(CornerX - 1, CornerY - 1);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
-			cout << char(220);
-		for (int i = 0; i < HEIGHTMAP; i++) {
-			GotoXY(CornerX - 1, CornerY + i);
-			cout << char(219);
-			GotoXY(CornerX + WIDTHMAP, CornerY + i);
-			cout << char(219);
-		}
-		GotoXY(CornerX - 1, CornerY + HEIGHTMAP);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
-			cout << char(223);
-	}
-	void DrawSnakeAndFruit() {
-		GotoXY(fruit->pos.x, fruit->pos.y);
-		TextColor(rand() % 9 + 8);
-		cout << char(4);
-		TextColor(Blue);
-		for (int i = 0; i < snake->tail.size() - 1; i++) {
-			GotoXY(snake->tail[i].x, snake->tail[i].y);
-			cout << (snake->cell[i] - '0') % snake->cell.size();
-		}
-		GotoXY(snake->tail.back().x, snake->tail.back().y);
-		cout << " ";
-		GotoXY(0, 0);
-		cout << "Score: " << score;
-	}
+	void RandomGate();
+	void InputLevel(int(*Level)(Snake*&));
+	void Logic();
+	void DrawMap();
+	void DrawSnake();
+	void DrawFruit();
+	void DrawGate();
 };
 void StartGame();
 
