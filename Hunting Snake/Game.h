@@ -10,7 +10,7 @@
 
 #define WIDTHCONSOLE 1280
 #define HEIGHTCONSOLE 704
-#define Target_lv1 30
+#define Target_lv1 70
 #define Target_lv2 100
 
 int Level_01(Snake*& snake);

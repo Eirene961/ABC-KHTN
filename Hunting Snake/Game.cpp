@@ -134,6 +134,6 @@ void StartGame()
 		game.snake->Move();
 		if(game.snake->dir != STOP)
 			game.snake->Update();
-		Sleep(1000);
+		Sleep(100);
 	}
 }
