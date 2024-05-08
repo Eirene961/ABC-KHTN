@@ -34,10 +34,8 @@ void Rank();
 void About();
 void Instruction();
 void Setting();
-void Menu();
+bool Menu();
 
-
-//Status Key(int z);
 
 
 #endif

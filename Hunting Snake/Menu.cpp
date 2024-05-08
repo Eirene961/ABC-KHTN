@@ -23,9 +23,11 @@ void Setting()
 
 }
 
-void Menu()
+bool Menu()
 {
-	system("cls");
+	HideCursor();
+	int cursorPos = 0;
+	bool quit = false; system("cls");
 	/*________ ________               __                __     __                               __
 		 /        |             / /|              /  |   / /|                             /  |
 		 █████████/  ___     __ ██/   __          ██ |   ██ | __    __  _______   _______ ██/  _______     ______
@@ -84,8 +86,6 @@ void Menu()
 	GotoXY(x + 1, y++);
 	cout << "\xDB\xDB\xDB\xDB\xDB\xDB / \xDB\xDB /  \xDB\xDB / \xDB\xDB\xDB\xDB\xDB\xDB\xDB /\xDB\xDB /  \xDB\xDB / \xDB\xDB\xDB\xDB\xDB\xDB\xDB /";
 
-	int cursorPos = 0;
-	bool quit = false;
 	do {
 		TextColor(DefaultColor);
 		for (int i = 0; i < 6; i++) {
@@ -96,7 +96,7 @@ void Menu()
 			GotoXY(x, y + i);
 			cout << selections[i];
 		}
-		TextColor(DefaultColor);
+		TextColor(0x07);
 		char input = tolower(_getch());
 		switch (input) {
 		case 'w':
@@ -110,7 +110,7 @@ void Menu()
 		case '\r':
 			switch (cursorPos) {
 			case 0:
-				quit = true;
+				return true;
 				break;
 			case 1:
 				Rank();
@@ -125,8 +125,10 @@ void Menu()
 				Setting();
 				break;
 			case 5:
+				quit = true;
 				break;
 			}
 		}
 	} while (!quit);
+	return false;
 }
