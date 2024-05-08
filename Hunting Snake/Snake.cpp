@@ -1,10 +1,10 @@
 #include "Snake.h"
 
 
-bool CheckFruit(vector<Point> positionSnake, Point fruit)
+bool CheckPoint(vector<Point> positionSnake, Point point)
 {
 	for (int i = 0; i < positionSnake.size(); i++) {
-		if (positionSnake[i].x == fruit.x && positionSnake[i].y == fruit.y)
+		if (positionSnake[i] == point)
 			return true;
 	}
 	return false;
