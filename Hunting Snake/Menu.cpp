@@ -1,7 +1,12 @@
 ﻿#include "Menu.h"
 
 
-vector<string> selections = { "Start", "Rank", "About", "Instruction", "Setting", "Exit" };
+vector<string> selections = { "Start", "Continue", "Rank" , "About", "Setting", "Exit"};
+
+void Continue()
+{
+
+}
 
 void Rank()
 {
@@ -9,11 +14,6 @@ void Rank()
 }
 
 void About()
-{
-
-}
-
-void Instruction()
 {
 
 }
@@ -90,7 +90,7 @@ bool Menu()
 
 	do {
 		TextColor(DefaultColor);
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < selections.size(); i++) {
 			if (i == cursorPos)
 				TextColor(Pink);
 			else
@@ -115,13 +115,13 @@ bool Menu()
 				return true;
 				break;
 			case 1:
-				Rank();
+				Continue();
 				break;
 			case 2:
-				About();
+				Rank();
 				break;
 			case 3:
-				Instruction();
+				About();
 				break;
 			case 4:
 				Setting();
