@@ -1,7 +1,10 @@
-#include <iostream>
+#include "Game.h"
 
-int main()
-{
-	std::cout << "Tao la Nhat Anh";
-	return 0;
+
+int main() {
+    system("color F0");
+
+    StartGame();
+
+    return 0;
 }
