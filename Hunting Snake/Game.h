@@ -11,8 +11,8 @@
 #define WIDTHCONSOLE 1100
 #define HEIGHTCONSOLE 700
 #define Target_lv1 10
-#define Target_lv2 70
-#define Target_lv3 100
+#define Target_lv2 10
+#define Target_lv3 70
 void GameOver();
 int Level_01(Snake*& snake);
 int Level_02(Snake*& snake);
@@ -125,6 +125,11 @@ struct Game
 			GotoXY(point.x, point.y);
 			cout << char(178);
 		}
+
+
+
+
+
 	}
 	void DrawSnake() {
 		TextColor(MainColor);
@@ -132,8 +137,19 @@ struct Game
 		cout << "Score: " << score;
 		BackgroundColor(DarkWhite);
 		for (int i = 0; i < snake->tail.size() - 1; i++) {
+			int num = i % snake->cell.size();
+			if (num < 8)
+				TextColor(Red);
+			else if (num < 16)
+				TextColor(DarkCyan);
+			else if (num < 24)
+				TextColor(Green);
+			else if (num < 32)
+				TextColor(DarkYellow);
+			else
+				TextColor(Black);
 			GotoXY(snake->tail[i].x, snake->tail[i].y);
-			cout << (snake->cell[i] - '0') % snake->cell.size();
+			cout << snake->cell[num] - '0';
 		}
 		GotoXY(snake->tail.back().x, snake->tail.back().y);
 		BackgroundColor(White);
