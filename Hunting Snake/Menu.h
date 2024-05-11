@@ -9,7 +9,7 @@
 using namespace std;
 
 
-#define Back				0
+#define Black				0
 #define DarkBlue			1
 #define DarkGreen			2
 #define DarkCyan			3
@@ -31,9 +31,9 @@ using namespace std;
 #define BACKGROUNDCOLOR		124
 #define TEXTCOLOR			121
 
+void Continue();
 void Rank();
 void About();
-void Instruction();
 void Setting();
 bool Menu();
 
