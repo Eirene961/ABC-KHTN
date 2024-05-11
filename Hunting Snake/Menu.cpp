@@ -25,9 +25,11 @@ void Setting()
 
 bool Menu()
 {
+	system("color F0");
+	system("cls");
 	HideCursor();
 	int cursorPos = 0;
-	bool quit = false; system("cls");
+	bool quit = false;
 	/*________ ________               __                __     __                               __
 		 /        |             / /|              /  |   / /|                             /  |
 		 █████████/  ___     __ ██/   __          ██ |   ██ | __    __  _______   _______ ██/  _______     ______
@@ -47,7 +49,7 @@ bool Menu()
 		  ██    ██/ ██ |  ██ |██    ██ |██ | ██  |██_______ |
 		   ██████ / ██ /  ██ / ███████ /██ /  ██ / ███████ /*/
 
-	TextColor(Blue);
+	TextColor(MainColor);
 	int x = 10, y = 1;
 	GotoXY(x - 8, y++);
 	cout << "         ________               __                __     __                               __";
@@ -126,6 +128,7 @@ bool Menu()
 				break;
 			case 5:
 				quit = true;
+				TextColor(White);
 				break;
 			}
 		}

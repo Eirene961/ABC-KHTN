@@ -5,6 +5,7 @@ Game game;
 
 void GameOver() {
 	int cnt = 10;
+	BackgroundColor(DarkWhite);
 	while (cnt != 0) {
 		for (int i = 1; i < game.snake->tail.size(); i++) {
 			TextColor(rand() % 9 + 8);
@@ -29,12 +30,45 @@ int Level_01(Snake*& snake)
 
 int Level_02(Snake*& snake)
 {
-	snake->pos = { CornerX + 3, (CornerY + HEIGHTMAP) / 2 + 4 };
+	snake->pos = { CornerX + 7, (CornerY + HEIGHTMAP) / 2 + 4 };
 	snake->tail.clear();
 	for (int i = 0; i <= 3; i++) {
 		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
 	}
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 15; j++) {
+			int x, y;
+			x = CornerX + 15 + j;
+			y = CornerY + 6 + i;
+			game.wall.push_back({ x, y });
+			x += 42;
+			game.wall.push_back({ x, y });
+			x -= 21;
+			y += 6;
+			game.wall.push_back({ x, y });
+			x -= 21;
+			y += 6;
+			game.wall.push_back({ x, y });
+			x += 42;
+			game.wall.push_back({ x, y });
+		}
+	}
 	return Target_lv2;
+}
+
+int Level_03(Snake*& snake)
+{
+	snake->pos = { CornerX + 7, (CornerY + HEIGHTMAP) / 2 + 4 };
+	snake->tail.clear();
+	for (int i = 0; i <= 5; i++) {
+		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
+	}
+	for (int i = 0; i < 50; i++) {
+		int x = rand() % WIDTHMAP + CornerX;
+		int y = rand() % HEIGHTMAP + CornerY;
+		game.wall.push_back({ x, y });
+	}
+	return Target_lv3;
 }
 
 bool DrawLevel_01()
@@ -43,10 +77,10 @@ bool DrawLevel_01()
 	game.DrawMap();
 	while (!game.snake->dead) {
 		game.DrawSnake();
-		game.Logic();
 		game.snake->Move();
 		game.snake->Update();
-		Sleep(150);
+		game.Logic();
+		Sleep(100);
 		if (game.gate == true && game.posGate == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -62,10 +96,29 @@ bool DrawLevel_02()
 	game.DrawMap();
 	while (!game.snake->dead) {
 		game.DrawSnake();
-		game.Logic();
 		game.snake->Move();
 		game.snake->Update();
+		game.Logic();
 		Sleep(135);
+		if (game.gate == true && game.posGate == game.snake->tail.back()) {
+			Sleep(500);
+			return false;
+		}
+	}
+	GameOver();
+	return true;
+}
+
+bool DrawLevel_03()
+{
+	game.InputLevel(Level_03);
+	game.DrawMap();
+	while (!game.snake->dead) {
+		game.DrawSnake();
+		game.snake->Move();
+		game.snake->Update();
+		game.Logic();
+		Sleep(100);
 		if (game.gate == true && game.posGate == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -79,12 +132,15 @@ void StartGame()
 {
 	srand(time(NULL));
 	FixConsoleWindow();
-	SetConsoleWindow(1280, 704);
+	SetConsoleWindow(WIDTHCONSOLE, HEIGHTCONSOLE);
 	MoveCenter();
-	if (!Menu())
-		return;
-	if (DrawLevel_01())
-		return;
-	if (DrawLevel_02())
-		return;
+	while (Menu()) {
+		game.Reset();
+		if (DrawLevel_01())
+			continue;
+		if (DrawLevel_02())
+			continue;
+		if (DrawLevel_03())
+			continue;
+	}
 }

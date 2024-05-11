@@ -9,7 +9,7 @@
 using namespace std;
 
 
-#define WIDTHMAP 101
+#define WIDTHMAP 86
 #define HEIGHTMAP 26
 #define CornerX 6
 #define CornerY 10

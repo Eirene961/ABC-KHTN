@@ -26,6 +26,7 @@ using namespace std;
 #define Yellow				14
 #define White				15
 
+#define MainColor Blue
 #define DefaultColor		7
 #define BACKGROUNDCOLOR		124
 #define TEXTCOLOR			121

@@ -2,7 +2,7 @@
 
 
 int main() {
-    system("color 70");
+    system("color F0");
 
     StartGame();
 
