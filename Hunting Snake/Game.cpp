@@ -34,7 +34,7 @@ void GameOver() {
 	BackgroundColor(DarkWhite);
 	while (cnt != 0) {
 		for (int i = 1; i < game.snake->tail.size(); i++) {
-			TextColor(rand() % 9 + 8);
+			TextColor(rand() % 4 + 10);
 			GotoXY(game.snake->tail[i].x + CornerX, game.snake->tail[i].y + CornerY);
 			cout << (game.snake->cell[i - 1] - '0') % game.snake->cell.size();
 		}
@@ -94,7 +94,7 @@ int Level_03(Snake*& snake)
 	// TELEPORT
 	int y = HEIGHTMAP / 2;
 	for (int i = -3; i <= 2; i++) {
-		game.teleport[y + i].push_back({ 0, WIDTHMAP - 1 });
+		game.teleport.push_back(make_pair(Point(0, y + i), Point(WIDTHMAP - 1, y + i)));
 	}
 
 	// WALL
@@ -124,49 +124,122 @@ int Level_03(Snake*& snake)
 	// MONSTER
 	Monster monster;
 	monster.type = WALL;
-	// LEFT
+	// Left
 	y = HEIGHTMAP / 2 - 2;
-	for (int i = 0; i < 4; i++) {
-		monster.pos.push_back(Point(11, y + i));
-	}
-	monster.erase.push_back(Point(11, y + 3));
-	monster.bound = make_pair(Point(11, 5), Point(11, HEIGHTMAP - 6));
 	monster.dir = UP;
+	monster.Input(Point(11, y));
+	monster.boundList.push_back(make_pair(Point(11, 5), Point(11, HEIGHTMAP - 6)));
 	game.monsterList.push_back(monster);
 	monster.Clear();
 
-	// RIGHT
-	for (int i = 0; i < 4; i++) {
-		monster.pos.push_back(Point(WIDTHMAP - 11, y + i));
-	}
-	monster.erase.push_back(Point(WIDTHMAP - 11, y));
-	monster.bound = make_pair(Point(WIDTHMAP - 11, 5), Point(WIDTHMAP - 11, HEIGHTMAP - 6));
+	// Right
 	monster.dir = DOWN;
+	monster.Input(Point(WIDTHMAP - 11, y));
+	monster.boundList.push_back(make_pair(Point(WIDTHMAP - 11, 5), Point(WIDTHMAP - 11, HEIGHTMAP - 6)));
 	game.monsterList.push_back(monster);
 	monster.Clear();
 
-	// UP
+	// Up
 	x = WIDTHMAP / 2;
-	for (int i = 0; i < 4; i++) {
-		monster.pos.push_back(Point(x, i));
-	}
-	monster.erase.push_back(Point(x, 0));
-	monster.bound = make_pair(Point(x, 0), Point(x, HEIGHTMAP / 2 - 1));
 	monster.dir = DOWN;
+	monster.Input(Point(x, 0));
+	monster.boundList.push_back(make_pair(Point(x, 0), Point(x, HEIGHTMAP / 2 - 1)));
 	game.monsterList.push_back(monster);
 	monster.Clear();
 
-	// DOWN
-	for (int i = 0; i < 4; i++) {
-		monster.pos.push_back(Point(x, HEIGHTMAP - 4 + i));
-	}
-	monster.erase.push_back(Point(x, HEIGHTMAP - 1));
-	monster.bound = make_pair(Point(x, HEIGHTMAP / 2), Point(x, HEIGHTMAP - 1));
+	// Down
 	monster.dir = UP;
+	monster.Input(Point(x, HEIGHTMAP - 4));
+	monster.boundList.push_back(make_pair(Point(x, HEIGHTMAP / 2), Point(x, HEIGHTMAP - 1)));
 	game.monsterList.push_back(monster);
 	monster.Clear();
 
 	return Target_lv3;
+}
+
+int Level_04(Snake*& snake)
+{
+	snake->pos = { 25, 20 };
+	snake->tail.clear();
+	for (int i = 0; i <= 24; i++) {
+		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
+	}
+
+	// MONSTER
+	Monster monster;
+	monster.type = CRAB;
+	monster.dir = UP;
+	int x = WIDTHMAP / 4 - 2;
+	int y = HEIGHTMAP / 2 - 3;
+	monster.Input(Point(3 * x + 5, HEIGHTMAP - 6));
+	monster.trigger.push_back(Point(x, y));
+	monster.trigger.push_back(Point(3 * x + 5, y));
+	monster.boundList.push_back(make_pair(Point(x, 0), Point(x + 4, HEIGHTMAP - 1)));
+	monster.boundList.push_back(make_pair(Point(3 * x + 5, 0), Point(3 * x + 9, HEIGHTMAP - 1)));
+	monster.boundList.push_back(make_pair(Point(0, y), Point(WIDTHMAP - 1, y + 5)));
+	game.monsterList.push_back(monster);
+	monster.Clear();
+
+
+	return Target_lv4;
+}
+
+int Level_05(Snake*& snake)
+{
+	snake->pos = { 35, 1 };
+	snake->tail.clear();
+	for (int i = 0; i <= 32; i++) {
+		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
+	}
+
+	// TELEPORT
+	game.teleport.push_back(make_pair(Point(0, 3), Point(WIDTHMAP - 1, HEIGHTMAP - 4)));
+	game.teleport.push_back(make_pair(Point(0, 4), Point(WIDTHMAP - 1, HEIGHTMAP - 5)));
+
+	// WALL
+	game.wall[0].push_back(2);
+	game.wall[0].push_back(5);
+	game.wall[WIDTHMAP - 1].push_back(HEIGHTMAP - 6);
+	game.wall[WIDTHMAP - 1].push_back(HEIGHTMAP - 3);
+
+	// MONSTER
+	Monster monster;
+	int x = WIDTHMAP / 2 - 4;
+	int y = 10;
+
+	// Wall Left
+	monster.type = WALL;
+	for (int i = 0; i < 10; i++) {
+		monster.pos.push_back(Point(i, y));
+	}
+	monster.erase.push_back(monster.pos[0]);
+	monster.dir = RIGHT;
+	monster.boundList.push_back(make_pair(Point(0, y), Point(x, y)));
+	game.monsterList.push_back(monster);
+	monster.Clear();
+
+	// Wall Right
+	for (int i = 0; i < 10; i++) {
+		monster.pos.push_back(Point(WIDTHMAP - 10 + i, HEIGHTMAP - 1 - y));
+	}
+	monster.erase.push_back(monster.pos.back());
+	monster.dir = LEFT;
+	monster.boundList.push_back(make_pair(Point(WIDTHMAP - 1 - x, HEIGHTMAP - 1 - y), Point(WIDTHMAP - 1, HEIGHTMAP - 1 - y)));
+	game.monsterList.push_back(monster);
+	monster.Clear();
+
+	// Crab
+	monster.type = CRAB;
+	monster.dir = RIGHT;
+	monster.Input(Point(0, HEIGHTMAP - 6));
+	monster.boundList.push_back(make_pair(Point(0, HEIGHTMAP - 6), Point(WIDTHMAP - 1, 5)));
+	monster.trigger.push_back(Point(x + 1, HEIGHTMAP - 6));
+	monster.trigger.push_back(Point(x + 1, 0));
+	monster.randomDirection = false;
+	game.monsterList.push_back(monster);
+	monster.Clear();
+
+	return Target_lv5;
 }
 
 bool DrawLevel_01()
@@ -174,12 +247,15 @@ bool DrawLevel_01()
 	game.InputLevel(Level_01);
 	game.DrawMap();
 	while (!game.snake->dead) {
-		game.Run();
+		game.DrawSnake();
+		game.snake->Move();
+		game.snake->Update();
+		game.Logic();
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
 		}
-		Sleep(100);
+		Sleep(140);
 	}
 	GameOver();
 	return true;
@@ -190,12 +266,15 @@ bool DrawLevel_02()
 	game.InputLevel(Level_02);
 	game.DrawMap();
 	while (!game.snake->dead) {
-		game.Run();
+		game.DrawSnake();
+		game.snake->Move();
+		game.snake->Update();
+		game.Logic();
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
 		}
-		Sleep(135);
+		Sleep(130);
 	}
 	GameOver();
 	return true;
@@ -206,7 +285,57 @@ bool DrawLevel_03()
 	game.InputLevel(Level_03);
 	game.DrawMap();
 	while (!game.snake->dead) {
-		game.Run();
+		game.DrawSnake();
+		game.time %= 2;
+		if (game.time == 0)
+			game.DrawMonster();
+		game.time++;
+		game.DrawTeleport();
+		game.snake->Move();
+		game.snake->Update();
+		game.Logic();
+		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
+			Sleep(500);
+			return false;
+		}
+		Sleep(120);
+	}
+	GameOver();
+	return true;
+}
+
+bool DrawLevel_04()
+{
+	game.InputLevel(Level_04);
+	game.DrawMap();
+	while (!game.snake->dead) {
+		game.DrawSnake();
+		game.DrawMonster();
+		game.DrawTeleport();
+		game.snake->Move();
+		game.snake->Update();
+		game.Logic();
+		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
+			Sleep(500);
+			return false;
+		}
+		Sleep(110);
+	}
+	GameOver();
+	return true;
+}
+
+bool DrawLevel_05()
+{
+	game.InputLevel(Level_05);
+	game.DrawMap();
+	while (!game.snake->dead) {
+		game.DrawSnake();
+		game.DrawMonster();
+		game.DrawTeleport();
+		game.snake->Move();
+		game.snake->Update();
+		game.Logic();
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -225,11 +354,15 @@ void StartGame()
 	MoveCenter();
 	while (Menu()) {
 		game.Reset();
-		/*if (DrawLevel_01())
+		if (DrawLevel_01())
 			continue;
 		if (DrawLevel_02())
-			continue;*/
+			continue;
 		if (DrawLevel_03())
+			continue;
+		if (DrawLevel_04())
+			continue;
+		if (DrawLevel_05())
 			continue;
 	}
 }
