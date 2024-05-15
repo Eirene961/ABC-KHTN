@@ -60,7 +60,7 @@ int Level_03(Snake*& snake)
 {
 	snake->pos = { CornerX + 7, (CornerY + HEIGHTMAP) / 2 + 4 };
 	snake->tail.clear();
-	for (int i = 0; i <= 5; i++) {
+	int y = HEIGHTMAP / 2;
 		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
 	}
 	for (int i = 0; i < 50; i++) {
