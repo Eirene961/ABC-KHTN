@@ -15,9 +15,12 @@ using namespace std;
 #define CornerY 10
 
 enum Direction { STOP, UP, DOWN, LEFT, RIGHT };
+enum Type { WALL, SPIDER };
 struct Point 
 {
 	int x, y;
+	Point() : x(0), y(0) {}
+	Point(int x, int y) : x(x), y(y) {}
 	bool operator == (Point other) {
 		return x == other.x && y == other.y;
 	}
@@ -60,8 +63,7 @@ struct Snake
 				break;
 			}
 		}
-	}
-	void Update() {
+
 		switch (dir) {
 		case LEFT:
 			pos.x--;
@@ -76,7 +78,8 @@ struct Snake
 			pos.y++;
 			break;
 		}
-
+	}
+	void Update() {
 		Point prev = tail[0];
 		tail[0] = pos;
 		for (int i = 1; i < tail.size(); i++) {
@@ -85,7 +88,7 @@ struct Snake
 			prev = temp;
 		}
 
-		if (pos.x < CornerX || pos.x >= CornerX + WIDTHMAP || pos.y < CornerY || pos.y >= CornerY + HEIGHTMAP)
+		if (pos.x < 0 || pos.x >= WIDTHMAP || pos.y < 0 || pos.y >= HEIGHTMAP)
 			dead = true;
 		for (int i = 1; i < tail.size() - 1; i++) {
 			if (tail[i] == pos && dir != STOP)
@@ -100,12 +103,69 @@ struct Fruit
 		pos = { 0, 0 };
 	}
 	void RandomFruit() {
-		int x = rand() % WIDTHMAP + CornerX;
-		int y = rand() % HEIGHTMAP + CornerY;
+		int x = rand() % WIDTHMAP;
+		int y = rand() % HEIGHTMAP;
 		pos = { x, y };
 	}
 };
-bool CheckPoint(vector<Point> positionSnake, Point point);
+struct Monster {
+	Type type;
+	vector<Point> pos;
+	Direction dir;
+	pair<Point, Point> bound;
+	vector<Point> erase;
+	
+	void Clear() {
+		pos.clear();
+		erase.clear();
+	}
+	void Move() {
+		if (pos[0] == bound.first) {
+			if (dir == UP)
+				dir = DOWN;
+			else if (dir == LEFT)
+				dir = RIGHT;
+		}
+		else if (pos.back() == bound.second) {
+			if (dir == DOWN)
+				dir = UP;
+			else if (dir == RIGHT)
+				dir = LEFT;
+		}
+
+		switch (dir) {
+		case UP:
+			if (type == WALL)
+				erase[0] = pos.back();
+			for (Point& point : pos) {
+				point.y--;
+			}
+			break;
+		case DOWN:
+			if (type == WALL)
+				erase[0] = pos[0];
+			for (Point& point : pos) {
+				point.y++;
+			}
+			break;
+		case LEFT:
+			if (type == WALL)
+				erase[0] = pos.back();
+			for (Point& point : pos) {
+				point.x--;
+			}
+			break;
+		case RIGHT:
+			if (type == WALL)
+				erase[0] = pos[0];
+			for (Point& point : pos) {
+				point.x++;
+			}
+			break;
+		}
+	}
+};
+bool CheckPoint(vector<Point> positionSnake, Point point, bool gate = false);
 
 
 #endif
