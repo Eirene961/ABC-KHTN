@@ -354,10 +354,10 @@ void StartGame()
 	MoveCenter();
 	while (Menu()) {
 		game.Reset();
-		if (DrawLevel_01())
+		/*if (DrawLevel_01())
 			continue;
 		if (DrawLevel_02())
-			continue;
+			continue;*/
 		if (DrawLevel_03())
 			continue;
 		if (DrawLevel_04())

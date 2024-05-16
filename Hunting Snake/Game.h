@@ -80,12 +80,14 @@ struct Game
 		Reset();
 		target = Level(snake);
 	}
-	bool CheckWall(Point position) {
+	bool CheckWall(Point position, bool tele = false) {
 		int x = position.x;
 		int y = position.y;
-		for (pair<Point, Point>& point : teleport) {
-			if (position == point.first || position == point.second)
-				return true;
+		if (tele == true) {
+			for (pair<Point, Point>& point : teleport) {
+				if (position == point.first || position == point.second)
+					return true;
+			}
 		}
 		if (BinarySearch(wall[x], 0, wall[x].size() - 1, y))
 			return true;
@@ -170,7 +172,7 @@ struct Game
 			snake->stunned = false;
 			do {
 				fruit->RandomFruit();
-			} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos));
+			} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos, true));
 			if (score != target) {
 				GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
 				TextColor(Red);
