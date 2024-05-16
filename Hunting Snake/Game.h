@@ -105,16 +105,18 @@ struct Game
 		HideCursor();
 
 		GotoXY(CornerX - 1, CornerY - 1);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
+		for (int i = 0; i < WIDTHMAP + 35; i++)
 			cout << char(220);
 		for (int i = 0; i < HEIGHTMAP; i++) {
 			GotoXY(CornerX - 1, CornerY + i);
 			cout << char(219);
 			GotoXY(CornerX + WIDTHMAP, CornerY + i);
 			cout << char(219);
+			GotoXY(CornerX + WIDTHMAP+33, CornerY + i);
+			cout << char(219);
 		}
 		GotoXY(CornerX - 1, CornerY + HEIGHTMAP);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
+		for (int i = 0; i < WIDTHMAP + 35; i++)
 			cout << char(223);
 		GotoXY(fruit->pos.x, fruit->pos.y);
 		TextColor(Red);
@@ -125,11 +127,36 @@ struct Game
 			GotoXY(point.x, point.y);
 			cout << char(178);
 		}
+
+
 	}
 	void DrawSnake() {
 		TextColor(MainColor);
-		GotoXY(0, 0);
-		cout << "Score: " << score;
+		//----------------------------
+		GotoXY(100, 14);
+		cout << "----LEVER: ???"<<"----";
+		GotoXY(104, 16);
+		cout << "SCORE: " << score;
+		GotoXY(104, 17);
+		cout << "TARGET: " << target;
+		GotoXY(104, 18);
+		cout << "Speed: ";
+
+		GotoXY(104, 22);
+		cout << "W: Move Up";
+		GotoXY(104, 23);
+		cout << "S: Move Down";
+		GotoXY(104, 24);
+		cout << "A: Move Left";
+		GotoXY(104, 25);
+		cout << "D: Move Right";
+		GotoXY(104, 26);
+		cout << "P: Pause Game";
+		GotoXY(104, 27);
+		cout << " : Save Game";
+		GotoXY(104, 28);
+		cout << " : Load Right";
+		//-------------------------------
 		BackgroundColor(DarkWhite);
 		for (int i = 0; i < snake->tail.size() - 1; i++) {
 			GotoXY(snake->tail[i].x, snake->tail[i].y);

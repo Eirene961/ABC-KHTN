@@ -89,3 +89,4 @@ void BackgroundColor(int color)
 	WORD wAttributes = (csbi.wAttributes & 0xFF0F) | ((color << 4) & 0x00F0);
 	SetConsoleTextAttribute(hConsole, wAttributes);
 }
+
