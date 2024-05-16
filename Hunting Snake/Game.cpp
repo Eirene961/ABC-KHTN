@@ -15,6 +15,12 @@ void GameOver() {
 		Sleep(200);
 		cnt--;
 	}
+	ofstream SCORE;
+	SCORE.open("rank.txt", ios::app);
+
+	SCORE << game.score << endl;
+
+	SCORE.close();
 	Sleep(1000);
 }
 

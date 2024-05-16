@@ -6,7 +6,8 @@
 #include "Console.h"
 #include "Menu.h"
 #include "Snake.h"
-
+#include <fstream>
+#include <string.h>
 
 #define WIDTHCONSOLE 1100
 #define HEIGHTCONSOLE 700
@@ -71,6 +72,7 @@ struct Game
 		} while (CheckPoint(snake->tail, posGate) || CheckWall(posGate));
 	}
 	void Logic() {
+		char check = ' ';
 		if (snake->pos == fruit->pos && gate == false) {
 			score += 10;
 			snake->tail.push_back(snake->pos);
@@ -98,6 +100,7 @@ struct Game
 			if (snake->pos == point)
 				snake->dead = true;
 		}
+		
 	}
 	void DrawMap() {
 		TextColor(MainColor);
