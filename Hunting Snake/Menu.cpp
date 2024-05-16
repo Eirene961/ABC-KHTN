@@ -10,7 +10,21 @@ void Continue()
 
 void Rank()
 {
-
+	vector<int> b;
+	ifstream a;
+	a.open("rank.txt", ios_base::in);
+	while (!a.eof()) {
+		int tmp;
+		a >> tmp;
+		b.push_back(tmp);
+	}
+	a.close();
+	for (int i = 0; i < b.size() - 1; i++)
+		for (int j = i + 1; j < b.size(); i++)
+			if (b[i] < b[j])
+				swap(b[i], b[j]);
+	for (int i = 0; i < b.size(); i++)
+		cout << i + 1 << '/' << b[i] << endl;
 }
 
 void About()

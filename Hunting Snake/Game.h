@@ -6,7 +6,8 @@
 #include "Console.h"
 #include "Menu.h"
 #include "Snake.h"
-
+#include <fstream>
+#include <string.h>
 
 #define WIDTHCONSOLE 1100
 #define HEIGHTCONSOLE 700
@@ -166,6 +167,7 @@ struct Game
 		return false;
 	}
 	void Logic() {
+		char check = ' ';
 		if (snake->pos == fruit->pos && gate == false) {
 			score += 10;
 			snake->tail.push_back(snake->pos);
