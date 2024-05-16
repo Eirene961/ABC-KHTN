@@ -235,7 +235,7 @@ int Level_05(Snake*& snake)
 	monster.boundList.push_back(make_pair(Point(0, HEIGHTMAP - 6), Point(WIDTHMAP - 1, 5)));
 	monster.trigger.push_back(Point(x + 1, HEIGHTMAP - 6));
 	monster.trigger.push_back(Point(x + 1, 0));
-	monster.randomDirection = false;
+	monster.randomDirection = 1;
 	game.monsterList.push_back(monster);
 	monster.Clear();
 

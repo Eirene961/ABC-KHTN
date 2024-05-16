@@ -136,7 +136,7 @@ struct Fruit
 struct Monster {
 	Type type;
 	vector<Point> pos;
-	bool randomDirection;
+	int randomDirection;
 	Direction dir;
 	vector<Point> trigger;
 	vector<pair<Point, Point>> boundList;
@@ -145,9 +145,10 @@ struct Monster {
 	Monster() {
 		type = WALL;
 		dir = STOP;
-		randomDirection = false;
+		randomDirection = 0;
 	}
 	void Clear() {
+		randomDirection = 0;
 		pos.clear();
 		trigger.clear();
 		boundList.clear();
@@ -287,7 +288,7 @@ struct Monster {
 	void RandomDirection() {
 		for (Point point : trigger) {
 			if (pos[0] == point) {
-				if (randomDirection == true) {
+				if (randomDirection == 0) {
 					Direction direction;
 					do {
 						direction = (Direction)(rand() % 4 + 1);
@@ -295,7 +296,7 @@ struct Monster {
 					dir = direction;
 					break;
 				}
-				else {
+				else if (randomDirection == 1) {
 					if (dir == UP)
 						dir = RIGHT;
 					else if (dir == DOWN)

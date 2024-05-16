@@ -80,46 +80,46 @@ struct Game
 		Reset();
 		target = Level(snake);
 	}
-	bool CheckWall(Point position, bool gate = false, bool tele = false) {
+	bool CheckWall(Point position) {
 		int x = position.x;
 		int y = position.y;
-		if (tele == true) {
-			for (pair<Point, Point> point : teleport) {
-				if (position == point.first || position == point.second)
-					return true;
-			}
-		}
-		if (gate == false) {
-			if (BinarySearch(wall[x], 0, wall[x].size() - 1, y))
+		for (pair<Point, Point>& point : teleport) {
+			if (position == point.first || position == point.second)
 				return true;
-			return false;
 		}
-		else {
-			for (int i = 0; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					if (BinarySearch(wall[x + i], 0, wall[x + i].size() - 1, y + j))
-						return true;
-				}
-			}
-			return false;
-		}
+		if (BinarySearch(wall[x], 0, wall[x].size() - 1, y))
+			return true;
+		return false;
 	}
 	void RandomGate() {
+		int random = rand() % 2;
 		int x, y;
-		do {
-			x = rand() % (WIDTHMAP - 2) + 1;
-			y = rand() % (HEIGHTMAP - 2) + 1;
-		} while (CheckPoint(snake->tail, Point(x, y), true) || CheckWall(Point(x, y), true));
+		if (random == 0) {
+			x = WIDTHMAP - 7;
+			y = 8;
+			if (CheckPoint(snake->tail, Point(x, y), true)) {
+				x = 6;
+				y = HEIGHTMAP - 9;
+			}
+		}
+		else {
+			x = 6;
+			y = HEIGHTMAP - 9;
+			if (CheckPoint(snake->tail, Point(x, y), true)) {
+				x = WIDTHMAP - 7;
+				y = 8;
+			}
+		}
 		posGate.push_back({ x, y });
 		posGate.push_back({ x + 1, y });
-		for (int i = 0; i <= 1; i++) {
+		for (int i = -1; i <= 1; i++) {
 			posGate.push_back({ x + i, y - 1 });
 			posGate.push_back({ x + i, y + 1 });
 		}
 	}
 	void Teleport() {
 		int y = snake->pos.y;
-		for (pair<Point, Point> point : teleport) {
+		for (pair<Point, Point>& point : teleport) {
 			if (snake->pos == point.first)
 				snake->pos = point.second;
 			else if (snake->pos == point.second)
@@ -146,13 +146,11 @@ struct Game
 			for (Point point : monster.pos) {
 				if (point == fruit->pos) {
 					if (monster.type != WALL) {
-						score -= 30;
+						score -= 20;
 						snake->stunned = true;
-						if (snake->tail.size() <= 3)
+						if (snake->tail.size() <= 2)
 							snake->dead = true;
 						else {
-							poison.push_back(snake->tail.back());
-							snake->tail.pop_back();
 							poison.push_back(snake->tail.back());
 							snake->tail.pop_back();
 							poison.push_back(snake->tail.back());
@@ -172,7 +170,7 @@ struct Game
 			snake->stunned = false;
 			do {
 				fruit->RandomFruit();
-			} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos, false, true));
+			} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos));
 			if (score != target) {
 				GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
 				TextColor(Red);
@@ -181,20 +179,28 @@ struct Game
 			else {
 				gate = true;
 				RandomGate();
-				GotoXY(posGate[1].x + CornerX, posGate[1].y + CornerY);
+				TextColor(Grey);
+				GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
 				cout << char(179);
-				GotoXY(posGate[2].x + CornerX, posGate[2].y + CornerY);
-				cout << char(196) << char(191);
-				GotoXY(posGate[3].x + CornerX, posGate[3].y + CornerY);
-				cout << char(196) << char(217);
+				for (int i = 1; i <= 7; i++) {
+					GotoXY(posGate[i].x + CornerX, posGate[i].y + CornerY);
+					cout << char(219);
+				}
 			}
 		}
 		if (gate == true) {
-			if (snake->pos == posGate[0]) {
+			color %= 3;
+			if (color == 0)
+				TextColor(Red);
+			else if (color == 1)
+				TextColor(DarkGreen);
+			else
+				TextColor(DarkYellow);
+			color++;
+			GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
+			cout << char(179);
+			if (snake->pos == posGate[0])
 				snake->dir = STOP;
-				GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
-				cout << ' ';
-			}
 			for (int i = 1; i < posGate.size(); i++) {
 				if (snake->pos == posGate[i])
 					snake->dead = true;
@@ -211,8 +217,11 @@ struct Game
 		if (CheckWall(snake->pos) || SnakeMeetMonster())
 			snake->dead = true;
 		for (Point point : poison) {
-			if (snake->pos == point)
+			if (snake->pos == point) {
+				score += 10;
+				snake->tail.push_back(point);
 				snake->stunned = true;
+			}
 		}
 		Teleport();
 	}
