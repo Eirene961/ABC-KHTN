@@ -132,7 +132,7 @@ struct Game
 	}
 	void DrawSnake() {
 		TextColor(MainColor);
-		//----------------------------
+		//-----------------------------
 		GotoXY(100, 14);
 		cout << "----LEVER: ???"<<"----";
 		GotoXY(104, 16);
