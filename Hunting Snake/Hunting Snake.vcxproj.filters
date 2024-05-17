@@ -46,11 +46,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Mylib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="SaveSnake.txt">
       <Filter>Source Files</Filter>
     </Text>

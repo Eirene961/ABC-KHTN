@@ -10,21 +10,27 @@ void Continue()
 
 void Rank()
 {
-	vector<int> b;
-	ifstream a;
-	a.open("rank.txt", ios_base::in);
-	while (!a.eof()) {
-		int tmp;
-		a >> tmp;
-		b.push_back(tmp);
+	system("cls");
+	vector<Save> save;
+	ifstream file("Rank.txt");
+	file.seekg(0, std::ios::beg);
+	while (!file.eof()) {
+		Save tmp;
+		file >> tmp.name;
+		file >> tmp.score;
+		save.push_back(tmp);
 	}
-	a.close();
-	for (int i = 0; i < b.size() - 1; i++)
-		for (int j = i + 1; j < b.size(); i++)
-			if (b[i] < b[j])
-				swap(b[i], b[j]);
-	for (int i = 0; i < b.size(); i++)
-		cout << i + 1 << '/' << b[i] << endl;
+	file.close();
+	save.pop_back();
+	for (int i = 0; i < save.size(); i++)
+		cout << save[i].name << ": " << save[i].score << endl;
+	while (true) {
+		if (_kbhit()) {
+			char cur = toupper(_getch());
+			if (cur == 'X')
+				break;
+		}
+	}
 }
 
 void About()
@@ -37,12 +43,11 @@ void Setting()
 
 }
 
-bool Menu()
+bool Menu(int cursorPos)
 {
 	system("color F0");
 	system("cls");
 	HideCursor();
-	int cursorPos = 0;
 	bool quit = false;
 	/*________ ________               __                __     __                               __
 		 /        |             / /|              /  |   / /|                             /  |
@@ -64,6 +69,7 @@ bool Menu()
 		   ██████ / ██ /  ██ / ███████ /██ /  ██ / ███████ /*/
 
 	TextColor(MainColor);
+	BackgroundColor(MainBackground);
 	int x = 10, y = 1;
 	GotoXY(x - 8, y++);
 	cout << "         ________               __                __     __                               __";
@@ -112,7 +118,7 @@ bool Menu()
 			GotoXY(x, y + i);
 			cout << selections[i];
 		}
-		TextColor(0x07);
+		TextColor(Grey);
 		char input = tolower(_getch());
 		switch (input) {
 		case 'w':
@@ -133,12 +139,15 @@ bool Menu()
 				break;
 			case 2:
 				Rank();
+				return Menu(cursorPos);
 				break;
 			case 3:
 				About();
+				return Menu(cursorPos);
 				break;
 			case 4:
 				Setting();
+				return Menu(cursorPos);
 				break;
 			case 5:
 				quit = true;

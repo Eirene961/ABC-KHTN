@@ -1,6 +1,18 @@
 #include "Game.h"
 
 
+vector<string> nameGame;
+
+bool CheckName(string name) {
+	for (string sign : nameGame) {
+		if (name == sign) {
+			cout << "Please give another name, this one existed!";
+			return true;
+		}
+	}
+	return false;
+}
+
 bool BinarySearch(vector<int> v, int l, int r, int x)
 {
 	while (l <= r) {
@@ -41,11 +53,44 @@ void GameOver() {
 		Sleep(200);
 		cnt--;
 	}
-	ofstream SCORE;
-	SCORE.open("rank.txt", ios::app);
-	SCORE << game.score << endl;
-	SCORE.close();
 	Sleep(1000);
+
+	TextColor(MainColor);
+	GotoXY(0, 1);
+	cout << "Do you want to save the game?\n"
+		<< "YES: Y\n"
+		<< "NO: N\n";
+	bool check = false;
+	while (true) {
+		bool out = false;
+		if (_kbhit()) {
+			char cur = toupper(_getch());
+			switch (cur) {
+			case 'Y':
+				out = true;
+				check = true;
+				break;
+			case 'N':
+				out = true;
+				check = false;
+				break;
+			}
+		}
+		if (out == true)
+			break;
+	}
+	if (check) {
+		cout << "Enter name: ";
+		string name;
+		do {
+			cin >> name;
+		} while (CheckName(name));
+		ofstream file;
+		file.open("Rank.txt", ios::app);
+		file << name << endl;
+		file << game.score << endl;
+		file.close();
+	}
 }
 
 int Level_01(Snake*& snake)
@@ -356,17 +401,111 @@ void StartGame()
 	FixConsoleWindow();
 	SetConsoleWindow(WIDTHCONSOLE, HEIGHTCONSOLE);
 	MoveCenter();
-	while (Menu()) {
+	while (Menu(0)) {
 		game.Reset();
 		/*if (DrawLevel_01())
 			continue;
 		if (DrawLevel_02())
-			continue;*/
+			continue;
 		if (DrawLevel_03())
 			continue;
 		if (DrawLevel_04())
-			continue;
+			continue;*/
 		if (DrawLevel_05())
 			continue;
 	}
+}
+
+// ------------- STRUCT -------------
+void Game::DrawMap()
+{
+	TextColor(MainColor);
+	system("cls");
+	HideCursor();
+
+	// MAP
+	GotoXY(CornerX - 1, CornerY - 1);
+	for (int i = 0; i < WIDTHMAP + 2; i++)
+		cout << char(220);
+	for (int i = 0; i < HEIGHTMAP; i++) {
+		GotoXY(CornerX - 1, CornerY + i);
+		cout << char(219);
+		GotoXY(CornerX + WIDTHMAP, CornerY + i);
+		cout << char(219);
+	}
+	GotoXY(CornerX - 1, CornerY + HEIGHTMAP);
+	for (int i = 0; i < WIDTHMAP + 2; i++)
+		cout << char(223);
+
+	// Fruit
+	GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
+	TextColor(Red);
+	cout << char(1);
+
+	// WALL
+	TextColor(MainColor);
+	for (int i = 0; i < WIDTHMAP; i++) {
+		for (int y : wall[i]) {
+			GotoXY(i + CornerX, y + CornerY);
+			cout << char(178);
+		}
+	}
+
+	// TELEPORT
+	DrawTeleport();
+
+
+
+
+	// NAVIGATION
+	TextColor(DarkGreen);
+	int x = CornerX + WIDTHMAP + 3;
+	GotoXY(x, 1);
+	for (int j = 0; j <= 32; j++)
+		cout << char(220);
+	for (int i = 2; i < CornerY + HEIGHTMAP; i++) {
+		GotoXY(x, i);
+		BackgroundColor(Yellow);
+		cout << char(219);
+		for (int j = 1; j <= 31; j++) {
+			if (i == CornerY - 1)
+				cout << char(220);
+			else
+				cout << ' ';
+		}
+		cout << char(219);
+	}
+	GotoXY(x, CornerY + HEIGHTMAP);
+	BackgroundColor(MainBackground);
+	for (int j = 0; j <= 32; j++)
+		cout << char(223);
+
+	BackgroundColor(Yellow);
+	x += 2;
+	GotoXY(x, CornerY + 1);
+	cout << "PLAYER NAME: ";
+
+	GotoXY(100, 14);
+	cout << "----LEVER: ???" << "----";
+	GotoXY(104, 16);
+	cout << "SCORE: " << score;
+	GotoXY(104, 17);
+	cout << "TARGET: " << target;
+	GotoXY(104, 18);
+	cout << "Speed: ";
+
+	GotoXY(104, 22);
+	cout << "W: Move Up";
+	GotoXY(104, 23);
+	cout << "S: Move Down";
+	GotoXY(104, 24);
+	cout << "A: Move Left";
+	GotoXY(104, 25);
+	cout << "D: Move Right";
+	GotoXY(104, 26);
+	cout << "P: Pause Game";
+	GotoXY(104, 27);
+	cout << " : Save Game";
+	GotoXY(104, 28);
+	cout << " : Load Right";
 }

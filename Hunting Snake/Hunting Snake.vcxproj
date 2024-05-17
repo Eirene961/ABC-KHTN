@@ -140,10 +140,7 @@
     <ClInclude Include="Console.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Mylib.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="rank.txt" />
+    <Text Include="Rank.txt" />
     <Text Include="SaveSnake.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

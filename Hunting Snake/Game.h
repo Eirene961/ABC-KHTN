@@ -11,11 +11,12 @@
 
 #define WIDTHCONSOLE 1100
 #define HEIGHTCONSOLE 700
-#define Target_lv1 70
-#define Target_lv2 80
-#define Target_lv3 80
-#define Target_lv4 80
-#define Target_lv5 80
+#define Target_lv1 10
+#define Target_lv2 10
+#define Target_lv3 10
+#define Target_lv4 10
+#define Target_lv5 10
+bool CheckName(string name);
 bool BinarySearch(vector<int> v, int l, int r, int x);
 void Insert(vector<int>& v, int x);
 void GameOver();
@@ -43,6 +44,7 @@ struct Game
 	int color;
 	vector<pair<Point,Point>> teleport;
 	vector<Point> poison;
+	
 
 	Game() {
 		snake = new Snake;
@@ -183,7 +185,7 @@ struct Game
 			else {
 				gate = true;
 				RandomGate();
-				TextColor(Grey);
+				TextColor(Pink);
 				GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
 				cout << char(179);
 				for (int i = 1; i <= 7; i++) {
@@ -229,44 +231,7 @@ struct Game
 		}
 		Teleport();
 	}
-	void DrawMap() {
-		TextColor(MainColor);
-		system("cls");
-		HideCursor();
-
-		// MAP
-		GotoXY(CornerX - 1, CornerY - 1);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
-			cout << char(220);
-		for (int i = 0; i < HEIGHTMAP; i++) {
-			GotoXY(CornerX - 1, CornerY + i);
-			cout << char(219);
-			GotoXY(CornerX + WIDTHMAP, CornerY + i);
-			cout << char(219);
-		}
-		GotoXY(CornerX - 1, CornerY + HEIGHTMAP);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
-			cout << char(223);
-
-		// Fruit
-		GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
-		TextColor(Red);
-		cout << char(1);
-
-		// WALL
-		TextColor(MainColor);
-		for (int i = 0; i < WIDTHMAP; i++) {
-			for (int y : wall[i]) {
-				GotoXY(i + CornerX, y + CornerY);
-				cout << char(178);
-			}
-		}
-		
-		// TELEPORT
-		DrawTeleport();
-
-
-	}
+	void DrawMap();
 	void DrawTeleport() {
 		color %= 3;
 		if (color == 0)
@@ -285,9 +250,9 @@ struct Game
 	}
 	void DrawSnake() {
 		TextColor(MainColor);
+		BackgroundColor(White);
 		GotoXY(0, 0);
 		cout << "Score: " << score;
-		BackgroundColor(DarkWhite);
 		for (int i = 0; i < snake->tail.size() - 1; i++) {
 			int num = i % snake->cell.size();
 			if (num < 8)
@@ -304,11 +269,12 @@ struct Game
 			cout << snake->cell[num] - '0';
 		}
 		GotoXY(snake->tail.back().x + CornerX, snake->tail.back().y + CornerY);
-		BackgroundColor(White);
+		BackgroundColor(MainBackground);
 		cout << " ";
 	}
 	void DrawMonster() {
 		TextColor(MainColor);
+		BackgroundColor(MainBackground);
 		for (Monster& monster : monsterList) {
 			monster.Move();
 			if (monster.type == WALL) {
