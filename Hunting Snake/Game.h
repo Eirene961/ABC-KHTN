@@ -127,7 +127,6 @@ struct Game
 			GotoXY(point.x, point.y);
 			cout << char(178);
 		}
-
 	}
 	void DrawSnake() {
 		TextColor(MainColor);
