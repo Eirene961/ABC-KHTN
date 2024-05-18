@@ -6,7 +6,8 @@
 #include <iostream>
 #include <conio.h>
 #include <vector>
-#include <mmsystem.h>
+#include <fstream>
+#include <string>
 using namespace std;
 
 
@@ -27,16 +28,25 @@ using namespace std;
 #define Yellow				14
 #define White				15
 
-#define MainColor Blue
+#define MainColor DarkGreen
+#define MainBackground White
 #define DefaultColor		7
 #define BACKGROUNDCOLOR		124
 #define TEXTCOLOR			121
 
-void Continue();
+struct Save {
+	string name;
+	int level;
+	int score;
+	string time;
+};
+
+
+int Continue();
 void Rank();
 void About();
 void Setting();
-bool Menu();
+int Menu(int cursorPos);
 
 
 

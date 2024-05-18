@@ -6,34 +6,38 @@
 #include "Console.h"
 #include "Menu.h"
 #include "Snake.h"
-
+#include <fstream>
+#include <string.h>
+#include <sstream>
+using namespace std;
 
 #define WIDTHCONSOLE 1100
 #define HEIGHTCONSOLE 700
 #define Target_lv1 70
-#define Target_lv2 80
-#define Target_lv3 80
-#define Target_lv4 80
-#define Target_lv5 80
+#define Target_lv2 150
+#define Target_lv3 230
+#define Target_lv4 310
+#define Target_lv5 390
 bool BinarySearch(vector<int> v, int l, int r, int x);
 void Insert(vector<int>& v, int x);
-void GameOver();
 int Level_01(Snake*& snake);
 int Level_02(Snake*& snake);
 int Level_03(Snake*& snake);
 int Level_04(Snake*& snake);
 int Level_05(Snake*& snake);
-bool DrawLevel_01();
-bool DrawLevel_02();
-bool DrawLevel_03();
-bool DrawLevel_04();
-bool DrawLevel_05();
+bool DrawLevel_01(bool playContinue = false);
+bool DrawLevel_02(bool playContinue = false);
+bool DrawLevel_03(bool playContinue = false);
+bool DrawLevel_04(bool playContinue = false);
+bool DrawLevel_05(bool playContinue = false);
 struct Game
 {
 	Snake* snake;
 	Fruit* fruit;
+	int level;
 	int score;
 	int target;
+	char* currentTime;
 	bool gate;
 	vector<Point> posGate;
 	vector<int> wall[WIDTHMAP];
@@ -43,10 +47,15 @@ struct Game
 	vector<pair<Point,Point>> teleport;
 	vector<Point> poison;
 
+	vector<string> namePlayer;
+	vector<string> nameSave;
+
 	Game() {
 		snake = new Snake;
 		fruit = new Fruit;
+		level = 0;
 		score = 0;
+		currentTime = new char[26];
 		target = 0;
 		gate = false;
 		time = 0;
@@ -56,284 +65,138 @@ struct Game
 		delete snake;
 		delete fruit;
 	}
-	void Reset() {
-		score = 0;
-		gate = false;
-		time = 0;
-		color = 0;
-		snake->dir = RIGHT;
-		snake->dead = false;
-		snake->stunned = false;
-		do {
-			fruit->RandomFruit();
-		} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos));
-		posGate.clear();
+
+	friend ifstream& operator >> (ifstream& file, Game& game) {
+		cout << "1." << endl;
+		file >> *game.snake;
+		cout << "2." << endl;
+		file >> *game.fruit;
+		cout << "3." << endl;
+		file >> game.level;
+		cout << "4." << endl;
+		file >> game.score;
+		cout << "5." << endl;
+		file >> game.target;
+		cout << "6." << endl;
+		file.ignore();
+		file.getline(game.currentTime, 26);
+		cout << "7." << endl;
+		file >> game.gate;
+		cout << "8." << endl;
+		if (game.gate) {
+			for (int i = 0; i <= 7; i++) {
+				Point point;
+				file >> point;
+				game.posGate.push_back(point);
+			}
+		}
+		cout << "9." << endl;
+		file.ignore();
 		for (int i = 0; i < WIDTHMAP; i++) {
-			if (wall[i].empty() == false)
-				wall[i].clear();
-		}
-		monsterList.clear();
-		teleport.clear();
-		poison.clear();
-	}
-	void InputLevel(int(*Level)(Snake*&)) {
-		Reset();
-		target = Level(snake);
-	}
-	bool CheckWall(Point position, bool tele = false) {
-		int x = position.x;
-		int y = position.y;
-		if (tele == true) {
-			for (pair<Point, Point>& point : teleport) {
-				if (position == point.first || position == point.second)
-					return true;
+			string s;
+			getline(file, s);
+			stringstream ss(s);
+			string token;
+			while (ss >> token) {
+				game.wall[i].push_back(stoi(token));
 			}
 		}
-		if (BinarySearch(wall[x], 0, wall[x].size() - 1, y))
-			return true;
-		return false;
-	}
-	void RandomGate() {
-		int random = rand() % 2;
-		int x, y;
-		if (random == 0) {
-			x = WIDTHMAP - 7;
-			y = 8;
-			if (CheckPoint(snake->tail, Point(x, y), true)) {
-				x = 6;
-				y = HEIGHTMAP - 9;
-			}
+		cout << "10." << endl;
+		file >> game.time;
+		int sizeMonster;
+		file >> sizeMonster;
+		cout << "11." << endl;
+		for (int i = 0; i < sizeMonster; i++) {
+			Monster monster;
+			file >> monster;
+			game.monsterList.push_back(monster);
 		}
-		else {
-			x = 6;
-			y = HEIGHTMAP - 9;
-			if (CheckPoint(snake->tail, Point(x, y), true)) {
-				x = WIDTHMAP - 7;
-				y = 8;
-			}
+		cout << "12." << endl;
+		file >> game.color;
+		int sizeTele;
+		file >> sizeTele;
+		cout << "13." << endl;
+		for (int i = 0; i < sizeTele; i++) {
+			pair<Point, Point> tele;
+			file >> tele.first;
+			file >> tele.second;
+			game.teleport.push_back((tele));
 		}
-		posGate.push_back({ x, y });
-		posGate.push_back({ x + 1, y });
-		for (int i = -1; i <= 1; i++) {
-			posGate.push_back({ x + i, y - 1 });
-			posGate.push_back({ x + i, y + 1 });
+		cout << "14." << endl;
+		int sizePoison;
+		file >> sizePoison;
+		cout << "15." << endl;
+		for (int i = 0; i < sizePoison; i++) {
+			Point point;
+			file >> point;
+			game.poison.push_back(point);
 		}
-	}
-	void Teleport() {
-		int y = snake->pos.y;
-		for (pair<Point, Point>& point : teleport) {
-			if (snake->pos == point.first)
-				snake->pos = point.second;
-			else if (snake->pos == point.second)
-				snake->pos = point.first;
-		}
-	}
-	bool SnakeMeetMonster() {
-		bool check = false;
-		for (Monster& monster : monsterList) {
-			for (Point point : monster.pos) {
-				for (int i = 0; i < snake->tail.size() - 1; i++) {
-					if (point == snake->tail[i]) {
-						if (i != 0)
-							snake->tail.erase(snake->tail.begin() + i);
-						check = true;
-					}
-				}
-			}
-		}
-		return check;
-	}
-	bool FruitMeetMonster() {
-		for (Monster& monster : monsterList) {
-			for (Point point : monster.pos) {
-				if (point == fruit->pos) {
-					if (monster.type != WALL) {
-						score -= 20;
-						snake->stunned = true;
-						if (snake->tail.size() <= 2)
-							snake->dead = true;
-						else {
-							poison.push_back(snake->tail.back());
-							snake->tail.pop_back();
-							poison.push_back(snake->tail.back());
-							snake->tail.pop_back();
-						}
-					}
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	void Logic() {
-		if (snake->pos == fruit->pos && gate == false) {
-			score += 10;
-			snake->tail.push_back(snake->pos);
-			snake->stunned = false;
-			do {
-				fruit->RandomFruit();
-			} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos, true));
-			if (score != target) {
-				GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
-				TextColor(Red);
-				cout << char(1);
-			}
-			else {
-				gate = true;
-				RandomGate();
-				TextColor(Grey);
-				GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
-				cout << char(179);
-				for (int i = 1; i <= 7; i++) {
-					GotoXY(posGate[i].x + CornerX, posGate[i].y + CornerY);
-					cout << char(219);
-				}
-			}
-		}
-		if (gate == true) {
-			color %= 3;
-			if (color == 0)
-				TextColor(Red);
-			else if (color == 1)
-				TextColor(DarkGreen);
-			else
-				TextColor(DarkYellow);
-			color++;
-			GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
-			cout << char(179);
-			if (snake->pos == posGate[0])
-				snake->dir = STOP;
-			for (int i = 1; i < posGate.size(); i++) {
-				if (snake->pos == posGate[i])
-					snake->dead = true;
-			}
-		}
-		if (FruitMeetMonster()) {
-			do {
-				fruit->RandomFruit();
-			} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos));
-			GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
-			TextColor(Red);
-			cout << char(1);
-		}
-		if (CheckWall(snake->pos) || SnakeMeetMonster())
-			snake->dead = true;
-		for (Point point : poison) {
-			if (snake->pos == point) {
-				score += 10;
-				snake->tail.push_back(point);
-				snake->stunned = true;
-			}
-		}
-		Teleport();
-	}
-	void DrawMap() {
-		TextColor(MainColor);
-		system("cls");
-		HideCursor();
+		cout << "16." << endl;
 
-		// MAP
-		GotoXY(CornerX - 1, CornerY - 1);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
-			cout << char(220);
-		for (int i = 0; i < HEIGHTMAP; i++) {
-			GotoXY(CornerX - 1, CornerY + i);
-			cout << char(219);
-			GotoXY(CornerX + WIDTHMAP, CornerY + i);
-			cout << char(219);
+		char _;
+		file >> _;
+
+
+		return file;
+	}
+
+	friend ofstream& operator << (ofstream& file, Game& game) {
+		file << *game.snake;
+		file << *game.fruit;
+		file << game.level << endl;
+		file << game.score << endl;
+		file << game.target << endl;
+		file << game.currentTime << endl;
+		file << game.gate << endl;
+		if (game.gate) {
+			for (int i = 0; i <= 7; i++)
+				file << game.posGate[i];
 		}
-		GotoXY(CornerX - 1, CornerY + HEIGHTMAP);
-		for (int i = 0; i < WIDTHMAP + 2; i++)
-			cout << char(223);
-
-		// Fruit
-		GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
-		TextColor(Red);
-		cout << char(1);
-
-		// WALL
-		TextColor(MainColor);
 		for (int i = 0; i < WIDTHMAP; i++) {
-			for (int y : wall[i]) {
-				GotoXY(i + CornerX, y + CornerY);
-				cout << char(178);
+			for (int j = 0; j < game.wall[i].size(); j++) {
+				file << game.wall[i][j] << ' ';
 			}
+			file << endl;
+		}
+		file << game.time << endl;
+		int sizeMonster = game.monsterList.size();
+		file << sizeMonster << endl;
+		for (int i = 0; i < sizeMonster; i++) {
+			file << game.monsterList[i];
+		}
+		file << game.color << endl;
+		int sizeTele = game.teleport.size();
+		file << sizeTele << endl;
+		for (int i = 0; i < sizeTele; i++) {
+			file << game.teleport[i].first;
+			file << game.teleport[i].second;
+		}
+		int sizePoison = game.poison.size();
+		file << sizePoison << endl;
+		for (int i = 0; i < sizePoison; i++) {
+			file << game.poison[i];
 		}
 		
-		// TELEPORT
-		DrawTeleport();
+		return file;
+	}
 
-
-	}
-	void DrawTeleport() {
-		color %= 3;
-		if (color == 0)
-			TextColor(Red);
-		else if (color == 1)
-			TextColor(DarkGreen);
-		else
-			TextColor(DarkYellow);
-		color++;
-		for (pair<Point, Point>& point : teleport) {
-			GotoXY(CornerX + point.first.x, CornerY + point.first.y);
-			cout << char(179);
-			GotoXY(CornerX + point.second.x, CornerY + point.second.y);
-			cout << char(179);
-		}
-	}
-	void DrawSnake() {
-		TextColor(MainColor);
-		GotoXY(0, 0);
-		cout << "Score: " << score;
-		BackgroundColor(DarkWhite);
-		for (int i = 0; i < snake->tail.size() - 1; i++) {
-			int num = i % snake->cell.size();
-			if (num < 8)
-				TextColor(Red);
-			else if (num < 16)
-				TextColor(DarkCyan);
-			else if (num < 24)
-				TextColor(DarkGreen);
-			else if (num < 32)
-				TextColor(DarkYellow);
-			else
-				TextColor(Pink);
-			GotoXY(snake->tail[i].x + CornerX, snake->tail[i].y + CornerY);
-			cout << snake->cell[num] - '0';
-		}
-		GotoXY(snake->tail.back().x + CornerX, snake->tail.back().y + CornerY);
-		BackgroundColor(White);
-		cout << " ";
-	}
-	void DrawMonster() {
-		TextColor(MainColor);
-		for (Monster& monster : monsterList) {
-			monster.Move();
-			if (monster.type == WALL) {
-				for (int i = 0; i < monster.pos.size(); i++) {
-					GotoXY(monster.pos[i].x + CornerX, monster.pos[i].y + CornerY);
-					cout << char(178);
-				}
-				GotoXY(monster.erase[0].x + CornerX, monster.erase[0].y + CornerY);
-				cout << ' ';
-			}
-			else if (monster.type == CRAB) {
-				for (int i = 0; i <= 17; i++) {
-					GotoXY(monster.pos[i].x + CornerX, monster.pos[i].y + CornerY);
-					if (i == 0 || i == 5 || i == 9 || i == 15)
-						cout << 'o';
-					else if (i == 1 || i == 2 || i == 16 || i == 17)
-						cout << 'O';
-					else
-						cout << char(219);
-				}
-				for (Point point : monster.erase) {
-					GotoXY(point.x + CornerX, point.y + CornerY);
-					cout << ' ';
-				}
-			}
-		}
-	}
+	void Reset();
+	void InputLevel(int(*Level)(Snake*&));
+	bool CheckWall(Point position, bool tele = false);
+	void RandomGate();
+	void Teleport();
+	bool SnakeMeetMonster();
+	bool FruitMeetMonster();
+	bool CheckNamePlayer(string name);
+	bool CheckNameSave(string name);
+	void LoadGame(string name);
+	bool Pause();
+	bool Logic();
+	void DrawMap();
+	void DrawTeleport();
+	void DrawSnake();
+	void DrawMonster();
+	void GameOver();
 };
 void StartGame();
 
