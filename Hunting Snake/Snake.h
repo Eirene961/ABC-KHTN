@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <conio.h>
 #include <Windows.h>
 #include <vector>
@@ -21,8 +22,14 @@ struct Point
 	int x, y;
 	Point() : x(0), y(0) {}
 	Point(int x, int y) : x(x), y(y) {}
+
 	bool operator == (Point other) {
 		return x == other.x && y == other.y;
+	}
+
+	friend ofstream& operator << (ofstream& file, Point& point) {
+		file << point.x << ' ' << point.y << endl;
+		return file;
 	}
 };
 struct Snake
@@ -43,6 +50,18 @@ struct Snake
 		dead = false;
 		stunned = false;
 	}
+
+	friend ofstream& operator << (ofstream& file, Snake& snake) {
+		int n = snake.tail.size();
+		file << n << endl;
+		for (int i = 0; i < n; i++) {
+			file << snake.tail[i];
+		}
+		file << snake.dir << endl;
+		file << snake.stunned << endl;
+		return file;
+	}
+
 	void Move() {
 		if (_kbhit()) {
 			if (stunned == false) {
@@ -124,9 +143,16 @@ struct Snake
 struct Fruit
 {
 	Point pos;
+
 	Fruit() {
 		pos = { 0, 0 };
 	}
+
+	friend ofstream& operator << (ofstream& file, Fruit& fruit) {
+		file << fruit.pos;
+		return file;
+	}
+
 	void RandomFruit() {
 		int x = rand() % WIDTHMAP;
 		int y = rand() % HEIGHTMAP;
@@ -147,6 +173,36 @@ struct Monster {
 		dir = STOP;
 		randomDirection = 0;
 	}
+
+	friend ofstream& operator << (ofstream& file, Monster& monster) {
+		file << monster.type << endl;
+		int sizePos = monster.pos.size();
+		file << sizePos << endl;
+		for (int i = 0; i < sizePos; i++) {
+			file << monster.pos[i];
+		}
+		file << monster.randomDirection << endl;
+		file << monster.dir << endl;
+		int sizeTrigger = monster.trigger.size();
+		file << sizeTrigger << endl;
+		for (int i = 0; i < sizeTrigger; i++) {
+			file << monster.trigger[i];
+		}
+		int sizeBound = monster.boundList.size();
+		file << sizeBound << endl;
+		for (int i = 0; i < sizeBound; i++) {
+			file << monster.boundList[i].first;
+			file << monster.boundList[i].second;
+		}
+		int sizeErase = monster.erase.size();
+		file << sizeErase << endl;
+		for (int i = 0; i < sizeErase; i++) {
+			file << monster.erase[i];
+		}
+
+		return file;
+	}
+
 	void Clear() {
 		randomDirection = 0;
 		pos.clear();

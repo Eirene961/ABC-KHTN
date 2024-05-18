@@ -1,10 +1,12 @@
 #include "Game.h"
 
 
-vector<string> nameGame;
+Game game;
+vector<string> namePlayer;
+vector<string> nameSave;
 
-bool CheckName(string name) {
-	for (string sign : nameGame) {
+bool CheckNamePlayer(string name) {
+	for (string sign : namePlayer) {
 		if (name == sign) {
 			cout << "Please give another name, this one existed!";
 			return true;
@@ -39,62 +41,47 @@ void Insert(vector<int>& v, int x) {
 	v.insert(v.begin() + l, x);
 }
 
-Game game;
-
 void GameOver() {
-	int cnt = 10;
-	BackgroundColor(DarkWhite);
+	int cnt = 15;
 	while (cnt != 0) {
 		for (int i = 1; i < game.snake->tail.size(); i++) {
-			TextColor(rand() % 4 + 10);
-			GotoXY(game.snake->tail[i].x + CornerX, game.snake->tail[i].y + CornerY);
-			cout << (game.snake->cell[i - 1] - '0') % game.snake->cell.size();
+			if (cnt % 2 == 0) {
+				int num = (i - 1) % game.snake->cell.size();
+				if (num < 8)
+					TextColor(Red);
+				else if (num < 16)
+					TextColor(DarkCyan);
+				else if (num < 24)
+					TextColor(DarkGreen);
+				else if (num < 32)
+					TextColor(DarkYellow);
+				else
+					TextColor(Pink);
+				GotoXY(game.snake->tail[i].x + CornerX, game.snake->tail[i].y + CornerY);
+				cout << (game.snake->cell[i - 1] - '0') % game.snake->cell.size();
+			}
+			else {
+				GotoXY(game.snake->tail[i].x + CornerX, game.snake->tail[i].y + CornerY);
+				cout << ' ';
+			}
 		}
-		Sleep(200);
+		Sleep(150);
 		cnt--;
 	}
 	Sleep(1000);
+	ofstream file;
+	file.open("Rank.txt", ios::app);
+	file << namePlayer.back() << endl;
+	file << game.level << endl;
+	file << game.score << endl;
+	file << game.currentTime << endl;
+	file.close();
 
-	TextColor(MainColor);
-	GotoXY(0, 1);
-	cout << "Do you want to save the game?\n"
-		<< "YES: Y\n"
-		<< "NO: N\n";
-	bool check = false;
-	while (true) {
-		bool out = false;
-		if (_kbhit()) {
-			char cur = toupper(_getch());
-			switch (cur) {
-			case 'Y':
-				out = true;
-				check = true;
-				break;
-			case 'N':
-				out = true;
-				check = false;
-				break;
-			}
-		}
-		if (out == true)
-			break;
-	}
-	if (check) {
-		cout << "Enter name: ";
-		string name;
-		do {
-			cin >> name;
-		} while (CheckName(name));
-		ofstream file;
-		file.open("Rank.txt", ios::app);
-		file << name << endl;
-		file << game.score << endl;
-		file.close();
-	}
 }
 
 int Level_01(Snake*& snake)
 {
+	game.level = 1;
 	snake->pos = { 5, HEIGHTMAP / 2 };
 	snake->tail.clear();
 	for (int i = 0; i <= 1; i++) {
@@ -105,6 +92,7 @@ int Level_01(Snake*& snake)
 
 int Level_02(Snake*& snake)
 {
+	game.level = 2;
 	snake->pos = { 10, HEIGHTMAP / 2 };
 	snake->tail.clear();
 	for (int i = 0; i <= 8; i++) {
@@ -134,6 +122,7 @@ int Level_02(Snake*& snake)
 
 int Level_03(Snake*& snake)
 {
+	game.level = 3;
 	snake->pos = { 20, 2 };
 	snake->tail.clear();
 	for (int i = 0; i <= 16; i++) {
@@ -208,6 +197,7 @@ int Level_03(Snake*& snake)
 
 int Level_04(Snake*& snake)
 {
+	game.level = 4;
 	snake->pos = { 25, 20 };
 	snake->tail.clear();
 	for (int i = 0; i <= 24; i++) {
@@ -235,6 +225,7 @@ int Level_04(Snake*& snake)
 
 int Level_05(Snake*& snake)
 {
+	game.level = 5;
 	snake->pos = { 35, 1 };
 	snake->tail.clear();
 	for (int i = 0; i <= 32; i++) {
@@ -299,7 +290,8 @@ bool DrawLevel_01()
 		game.DrawSnake();
 		game.snake->Move();
 		game.snake->Update();
-		game.Logic();
+		if (game.Logic())
+			return true;
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -318,7 +310,8 @@ bool DrawLevel_02()
 		game.DrawSnake();
 		game.snake->Move();
 		game.snake->Update();
-		game.Logic();
+		if (game.Logic())
+			return true;
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -342,7 +335,8 @@ bool DrawLevel_03()
 		game.DrawTeleport();
 		game.snake->Move();
 		game.snake->Update();
-		game.Logic();
+		if (game.Logic())
+			return true;
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -363,7 +357,8 @@ bool DrawLevel_04()
 		game.DrawTeleport();
 		game.snake->Move();
 		game.snake->Update();
-		game.Logic();
+		if (game.Logic())
+			return true;
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -384,7 +379,8 @@ bool DrawLevel_05()
 		game.DrawTeleport();
 		game.snake->Move();
 		game.snake->Update();
-		game.Logic();
+		if (game.Logic())
+			return true;
 		if (game.gate == true && game.posGate[0] == game.snake->tail.back()) {
 			Sleep(500);
 			return false;
@@ -403,24 +399,355 @@ void StartGame()
 	MoveCenter();
 	while (Menu(0)) {
 		game.Reset();
-		/*if (DrawLevel_01())
+		game.score = 0;
+		GotoXY(0, 0);
+		cout << "Enter name: ";
+		string name;
+		do {
+			cin >> name;
+		} while (CheckNamePlayer(name));
+		namePlayer.push_back(name);
+		time_t currentTime = time(nullptr);
+		ctime_s(game.currentTime, sizeof(string), &currentTime);
+		
+		if (DrawLevel_01())
 			continue;
 		if (DrawLevel_02())
 			continue;
 		if (DrawLevel_03())
 			continue;
 		if (DrawLevel_04())
-			continue;*/
+			continue;
 		if (DrawLevel_05())
 			continue;
 	}
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ------------- STRUCT -------------
+void Game::Reset()
+{
+	gate = false;
+	time = 0;
+	color = 0;
+	snake->dir = RIGHT;
+	snake->dead = false;
+	snake->stunned = false;
+	posGate.clear();
+	for (int i = 0; i < WIDTHMAP; i++) {
+		if (wall[i].empty() == false)
+			wall[i].clear();
+	}
+	monsterList.clear();
+	teleport.clear();
+	poison.clear();
+}
+
+
+void Game::InputLevel(int(*Level)(Snake*&))
+{
+	Reset();
+	target = Level(snake);
+	do {
+		fruit->RandomFruit();
+	} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos));
+}
+
+
+bool Game::CheckWall(Point position, bool tele)
+{
+	int x = position.x;
+	int y = position.y;
+	if (tele == true) {
+		for (pair<Point, Point>& point : teleport) {
+			if (position == point.first || position == point.second)
+				return true;
+		}
+	}
+	if (BinarySearch(wall[x], 0, wall[x].size() - 1, y))
+		return true;
+	return false;
+}
+
+
+void Game::RandomGate()
+{
+	int random = rand() % 2;
+	int x, y;
+	if (random == 0) {
+		x = WIDTHMAP - 7;
+		y = 8;
+		if (CheckPoint(snake->tail, Point(x, y), true)) {
+			x = 6;
+			y = HEIGHTMAP - 9;
+		}
+	}
+	else {
+		x = 6;
+		y = HEIGHTMAP - 9;
+		if (CheckPoint(snake->tail, Point(x, y), true)) {
+			x = WIDTHMAP - 7;
+			y = 8;
+		}
+	}
+	posGate.push_back({ x, y });
+	posGate.push_back({ x + 1, y });
+	for (int i = -1; i <= 1; i++) {
+		posGate.push_back({ x + i, y - 1 });
+		posGate.push_back({ x + i, y + 1 });
+	}
+}
+
+
+void Game::Teleport()
+{
+	int y = snake->pos.y;
+	for (pair<Point, Point>& point : teleport) {
+		if (snake->pos == point.first)
+			snake->pos = point.second;
+		else if (snake->pos == point.second)
+			snake->pos = point.first;
+	}
+}
+
+
+bool Game::SnakeMeetMonster() {
+	bool check = false;
+	for (Monster& monster : monsterList) {
+		for (Point point : monster.pos) {
+			for (int i = 0; i < snake->tail.size() - 1; i++) {
+				if (point == snake->tail[i]) {
+					if (i != 0)
+						snake->tail.erase(snake->tail.begin() + i);
+					check = true;
+				}
+			}
+		}
+	}
+	return check;
+}
+
+
+bool Game::FruitMeetMonster() {
+	for (Monster& monster : monsterList) {
+		for (Point point : monster.pos) {
+			if (point == fruit->pos) {
+				if (monster.type != WALL) {
+					score -= 20;
+					snake->stunned = true;
+					if (snake->tail.size() <= 2)
+						snake->dead = true;
+					else {
+						poison.push_back(snake->tail.back());
+						snake->tail.pop_back();
+						poison.push_back(snake->tail.back());
+						snake->tail.pop_back();
+					}
+				}
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
+bool Game::CheckNameSave(string name)
+{
+	for (string sign : nameSave) {
+		if (name == sign) {
+			cout << "Please give another name, this one existed!";
+			return true;
+		}
+	}
+	return false;
+}
+
+
+void Game::LoadGame(string name)
+{
+	nameSave.push_back(name);
+	name += ".txt";
+	ofstream file(name, ios::out);
+	file << game;
+	file.close();
+}
+
+
+bool Game::Pause()
+{
+	int width = 30;
+	int height = 10;
+	int x = CornerX + WIDTHMAP / 3;
+	int y = CornerY + HEIGHTMAP / 4;
+
+	TextColor(MainColor);
+	BackgroundColor(Yellow);
+	GotoXY(x, y);
+	for (int i = 1; i <= width; i++) {
+		if (i == 1 || i == width)
+			cout << char(219);
+		else
+			cout << char(223);
+
+	}
+	for (int i = 1; i <= height; i++) {
+		GotoXY(x, y + i);
+		for (int j = 1; j <= width; j++) {
+			if (j == 1 || j == width)
+				cout << char(219);
+			else
+				cout << ' ';
+		}
+	}
+	GotoXY(x + 1, y + height);
+	for (int i = 1; i < width - 1; i++)
+		cout << char(220);
+
+	vector<string> selections = { "CONTINUE", "SAVE GAME", "MUSIC", "EXIT" };
+	bool quit = false;
+	int cursorPos = 0;
+	do {
+		for (int i = 0; i < selections.size(); i++) {
+			if (i == cursorPos)
+				TextColor(Pink);
+			else
+				TextColor(Grey);
+			GotoXY(x + 3, y + i + 1);
+			cout << selections[i];
+		}
+		TextColor(Grey);
+		char input = tolower(_getch());
+		switch (input) {
+		case 'w':
+			if (cursorPos > 0)
+				cursorPos--;
+			break;
+		case 's':
+			if (cursorPos < selections.size() - 1)
+				cursorPos++;
+			break;
+		case '\r':
+			string name;
+			switch (cursorPos) {
+			case 0:
+				return true;
+				break;
+			case 1:
+				GotoXY(0, 0);
+				cout << "Enter name: ";
+				do {
+					cin >> name;
+				} while (CheckNameSave(name));
+				LoadGame(name);
+				break;
+			case 2:
+				break;
+			case 3:
+				quit = true;
+				break;
+			}
+		}
+	} while (!quit);
+	return false;
+}
+
+
+bool Game::Logic() {
+	if (GetAsyncKeyState('p') || GetAsyncKeyState('P')) {
+		if (Pause())
+			DrawMap();
+		else
+			return true;
+	}
+
+
+	if (snake->pos == fruit->pos && gate == false) {
+		score += 10;
+		GotoXY(CornerX + WIDTHMAP + 12, CornerY + 3);
+		TextColor(MainColor);
+		BackgroundColor(Yellow);
+		cout << score << "   ";
+		BackgroundColor(MainBackground);
+		snake->tail.push_back(snake->pos);
+		snake->stunned = false;
+		if (score != target) {
+			do {
+				fruit->RandomFruit();
+			} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos, true));
+			GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
+			TextColor(Red);
+			cout << char(1);
+		}
+		else {
+			gate = true;
+			RandomGate();
+			TextColor(Pink);
+			GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
+			cout << char(179);
+			for (int i = 1; i <= 7; i++) {
+				GotoXY(posGate[i].x + CornerX, posGate[i].y + CornerY);
+				cout << char(219);
+			}
+		}
+	}
+	if (gate == true) {
+		color %= 3;
+		if (color == 0)
+			TextColor(Red);
+		else if (color == 1)
+			TextColor(DarkGreen);
+		else
+			TextColor(DarkYellow);
+		color++;
+		GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
+		cout << char(179);
+		if (snake->pos == posGate[0])
+			snake->dir = STOP;
+		for (int i = 1; i < posGate.size(); i++) {
+			if (snake->pos == posGate[i])
+				snake->dead = true;
+		}
+	}
+	if (FruitMeetMonster()) {
+		do {
+			fruit->RandomFruit();
+		} while (CheckPoint(snake->tail, fruit->pos) || CheckWall(fruit->pos));
+		GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
+		TextColor(Red);
+		cout << char(1);
+	}
+	if (CheckWall(snake->pos) || SnakeMeetMonster())
+		snake->dead = true;
+	for (Point point : poison) {
+		if (snake->pos == point) {
+			score += 10;
+			snake->tail.push_back(point);
+			snake->stunned = true;
+		}
+	}
+	Teleport();
+	return false;
+}
+
+
 void Game::DrawMap()
 {
-	TextColor(MainColor);
 	system("cls");
+	system("color F0");
+	TextColor(MainColor);
 	HideCursor();
 
 	// MAP
@@ -457,8 +784,8 @@ void Game::DrawMap()
 
 
 
-	// NAVIGATION
-	TextColor(DarkGreen);
+	// INSTRUCTION
+	TextColor(MainColor);
 	int x = CornerX + WIDTHMAP + 3;
 	GotoXY(x, 1);
 	for (int j = 0; j <= 32; j++)
@@ -483,16 +810,13 @@ void Game::DrawMap()
 	BackgroundColor(Yellow);
 	x += 2;
 	GotoXY(x, CornerY + 1);
-	cout << "PLAYER NAME: ";
-
-	GotoXY(100, 14);
-	cout << "----LEVER: ???" << "----";
-	GotoXY(104, 16);
-	cout << "SCORE: " << score;
-	GotoXY(104, 17);
-	cout << "TARGET: " << target;
-	GotoXY(104, 18);
-	cout << "Speed: ";
+	cout << "PLAYER NAME: " << namePlayer.back();
+	GotoXY(x, CornerY + 2);
+	cout << "LEVEL: " << game.level;
+	GotoXY(x, CornerY + 3);
+	cout << "SCORE: " << game.score;
+	GotoXY(x, CornerY + 4);
+	cout << "TARGET: " << game.target;
 
 	GotoXY(104, 22);
 	cout << "W: Move Up";
@@ -508,4 +832,78 @@ void Game::DrawMap()
 	cout << " : Save Game";
 	GotoXY(104, 28);
 	cout << " : Load Right";
+}
+
+
+void Game::DrawTeleport() {
+	color %= 3;
+	if (color == 0)
+		TextColor(Red);
+	else if (color == 1)
+		TextColor(DarkGreen);
+	else
+		TextColor(DarkYellow);
+	color++;
+	for (pair<Point, Point>& point : teleport) {
+		GotoXY(CornerX + point.first.x, CornerY + point.first.y);
+		cout << char(179);
+		GotoXY(CornerX + point.second.x, CornerY + point.second.y);
+		cout << char(179);
+	}
+}
+
+
+void Game::DrawSnake() {
+	TextColor(MainColor);
+	BackgroundColor(White);
+	for (int i = 0; i < snake->tail.size() - 1; i++) {
+		int num = i % snake->cell.size();
+		if (num < 8)
+			TextColor(Red);
+		else if (num < 16)
+			TextColor(DarkCyan);
+		else if (num < 24)
+			TextColor(DarkGreen);
+		else if (num < 32)
+			TextColor(DarkYellow);
+		else
+			TextColor(Pink);
+		GotoXY(snake->tail[i].x + CornerX, snake->tail[i].y + CornerY);
+		cout << snake->cell[num] - '0';
+	}
+	GotoXY(snake->tail.back().x + CornerX, snake->tail.back().y + CornerY);
+	BackgroundColor(MainBackground);
+	cout << " ";
+}
+
+
+void Game::DrawMonster() {
+	TextColor(MainColor);
+	BackgroundColor(MainBackground);
+	for (Monster& monster : monsterList) {
+		monster.Move();
+		if (monster.type == WALL) {
+			for (int i = 0; i < monster.pos.size(); i++) {
+				GotoXY(monster.pos[i].x + CornerX, monster.pos[i].y + CornerY);
+				cout << char(178);
+			}
+			GotoXY(monster.erase[0].x + CornerX, monster.erase[0].y + CornerY);
+			cout << ' ';
+		}
+		else if (monster.type == CRAB) {
+			for (int i = 0; i <= 17; i++) {
+				GotoXY(monster.pos[i].x + CornerX, monster.pos[i].y + CornerY);
+				if (i == 0 || i == 5 || i == 9 || i == 15)
+					cout << 'o';
+				else if (i == 1 || i == 2 || i == 16 || i == 17)
+					cout << 'O';
+				else
+					cout << char(219);
+			}
+			for (Point point : monster.erase) {
+				GotoXY(point.x + CornerX, point.y + CornerY);
+				cout << ' ';
+			}
+		}
+	}
 }

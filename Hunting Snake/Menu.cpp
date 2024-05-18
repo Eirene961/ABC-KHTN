@@ -11,25 +11,82 @@ void Continue()
 void Rank()
 {
 	system("cls");
+
+	int width = 110;
+	int height = 25;
+
+	int x = 10, y = 10;
+
+	GotoXY(x + width / 2 - 2, y - 2);
+	cout << "RANK";
+
+	BackgroundColor(Yellow);
+	GotoXY(x, y);
+	for (int i = 1; i <= width; i++) {
+		if (i == 1 || i == width)
+			cout << char(219);
+		else
+			cout << char(223);
+
+	}
+	for (int i = 1; i <= height; i++) {
+		GotoXY(x, y + i);
+		for (int j = 1; j <= width; j++) {
+			if (j == 1 || j == width)
+				cout << char(219);
+			else
+				cout << ' ';
+		}
+	}
+	GotoXY(x + 1, y + height);
+	for (int i = 1; i < width - 1; i++)
+		cout << char(220);
+	
+	GotoXY(x + 1, y + 2);
+	for (int i = 1; i < width - 1; i++) {
+		cout << char(220);
+	}
+
+	GotoXY(x + 10, y + 1);
+	cout << "NAME";
+	GotoXY(x + 35, y + 1);
+	cout << "LEVEL";
+	GotoXY(x + 60, y + 1);
+	cout << "SCORE";
+	GotoXY(x + 90, y + 1);
+	cout << "DATE";
+
+
+	x += 2;
+	y += 3;
+
 	vector<Save> save;
 	ifstream file("Rank.txt");
 	file.seekg(0, std::ios::beg);
 	while (!file.eof()) {
 		Save tmp;
 		file >> tmp.name;
+		file >> tmp.level;
 		file >> tmp.score;
+		file.ignore();
+		getline(file, tmp.time);
 		save.push_back(tmp);
 	}
 	file.close();
 	save.pop_back();
-	for (int i = 0; i < save.size(); i++)
-		cout << save[i].name << ": " << save[i].score << endl;
+	for (int i = 0; i < save.size(); i++) {
+		GotoXY(x, y + i);
+		cout << i + 1 << ". " << save[i].name;
+		GotoXY(x + 35, y + i);
+		cout << save[i].level;
+		GotoXY(x + 60, y + i);
+		cout << save[i].score;
+		GotoXY(x + 77, y + i);
+		cout << save[i].time;
+	}
 	while (true) {
-		if (_kbhit()) {
-			char cur = toupper(_getch());
-			if (cur == 'X')
-				break;
-		}
+		if (GetAsyncKeyState(VK_ESCAPE))
+			break;
 	}
 }
 
@@ -48,7 +105,6 @@ bool Menu(int cursorPos)
 	system("color F0");
 	system("cls");
 	HideCursor();
-	bool quit = false;
 	/*________ ________               __                __     __                               __
 		 /        |             / /|              /  |   / /|                             /  |
 		 █████████/  ___     __ ██/   __          ██ |   ██ | __    __  _______   _______ ██/  _______     ______
@@ -108,6 +164,7 @@ bool Menu(int cursorPos)
 	GotoXY(x + 1, y++);
 	cout << "\xDB\xDB\xDB\xDB\xDB\xDB / \xDB\xDB /  \xDB\xDB / \xDB\xDB\xDB\xDB\xDB\xDB\xDB /\xDB\xDB /  \xDB\xDB / \xDB\xDB\xDB\xDB\xDB\xDB\xDB /";
 
+	bool quit = false;
 	do {
 		TextColor(DefaultColor);
 		for (int i = 0; i < selections.size(); i++) {
@@ -126,7 +183,7 @@ bool Menu(int cursorPos)
 				cursorPos--;
 			break;
 		case 's':
-			if (cursorPos < 5)
+			if (cursorPos < selections.size() - 1)
 				cursorPos++;
 			break;
 		case '\r':

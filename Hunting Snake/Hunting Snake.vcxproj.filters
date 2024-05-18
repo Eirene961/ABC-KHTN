@@ -46,9 +46,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="SaveSnake.txt">
-      <Filter>Source Files</Filter>
-    </Text>
     <Text Include="rank.txt">
       <Filter>Source Files</Filter>
     </Text>

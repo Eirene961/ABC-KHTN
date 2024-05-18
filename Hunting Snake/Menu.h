@@ -36,8 +36,11 @@ using namespace std;
 
 struct Save {
 	string name;
+	int level;
 	int score;
+	string time;
 };
+
 
 void Continue();
 void Rank();
