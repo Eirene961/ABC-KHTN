@@ -42,11 +42,11 @@ struct Save {
 };
 
 
-void Continue();
+bool Continue(string& nameFile);
 void Rank();
 void About();
 void Setting();
-bool Menu(int cursorPos);
+bool Menu(int cursorPos, string& fileContinue);
 
 
 

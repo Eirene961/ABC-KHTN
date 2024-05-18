@@ -27,6 +27,12 @@ struct Point
 		return x == other.x && y == other.y;
 	}
 
+	friend ifstream& operator >> (ifstream& file, Point& point) {
+		file >> point.x;
+		file >> point.y;
+		return file;
+	}
+
 	friend ofstream& operator << (ofstream& file, Point& point) {
 		file << point.x << ' ' << point.y << endl;
 		return file;
@@ -49,6 +55,22 @@ struct Snake
 		tail.push_back({ 0, 0 });
 		dead = false;
 		stunned = false;
+	}
+
+	friend ifstream& operator >> (ifstream& file, Snake& snake) {
+		int n;
+		file >> n;
+		for (int i = 0; i < n; i++) {
+			Point point;
+			file >> point;
+			snake.tail.push_back(point);
+		}
+		snake.pos = snake.tail[0];
+		int dir;
+		file >> dir;
+		snake.dir = (Direction)dir;
+		file >> snake.stunned;
+		return file;
 	}
 
 	friend ofstream& operator << (ofstream& file, Snake& snake) {
@@ -132,11 +154,16 @@ struct Snake
 			prev = temp;
 		}
 
-		if (pos.x < 0 || pos.x >= WIDTHMAP || pos.y < 0 || pos.y >= HEIGHTMAP)
+
+		if (pos.x < 0 || pos.x >= WIDTHMAP || pos.y < 0 || pos.y >= HEIGHTMAP) {
 			dead = true;
+			cout << "MAP";
+		}
 		for (int i = 1; i < tail.size() - 1; i++) {
-			if (tail[i] == pos && dir != STOP)
+			if (tail[i] == pos && dir != STOP) {
 				dead = true;
+				cout << "TAIL";
+			}
 		}
 	}
 };
@@ -146,6 +173,11 @@ struct Fruit
 
 	Fruit() {
 		pos = { 0, 0 };
+	}
+
+	friend ifstream& operator >> (ifstream& file, Fruit& fruit) {
+		file >> fruit.pos;
+		return file;
 	}
 
 	friend ofstream& operator << (ofstream& file, Fruit& fruit) {
@@ -172,6 +204,47 @@ struct Monster {
 		type = WALL;
 		dir = STOP;
 		randomDirection = 0;
+	}
+
+	friend ifstream& operator >> (ifstream& file, Monster& monster) {
+		int type;
+		file >> type;
+		monster.type = (Type)type;
+		int sizePos;
+		file >> sizePos;
+		for (int i = 0; i < sizePos; i++) {
+			Point point;
+			file >> point;
+			monster.pos.push_back(point);
+		}
+		file >> monster.randomDirection;
+		int dir;
+		file >> dir;
+		monster.dir = (Direction)dir;
+		int sizeTrigger;
+		file >> sizeTrigger;
+		for (int i = 0; i < sizeTrigger; i++) {
+			Point point;
+			file >> point;
+			monster.trigger.push_back(point);
+		}
+		int sizeBound;
+		file >> sizeBound;
+		for (int i = 0; i < sizeBound; i++) {
+			pair<Point, Point> bound;
+			file >> bound.first;
+			file >> bound.second;
+			monster.boundList.push_back(bound);
+		}
+		int sizeErase;
+		file >> sizeErase;
+		for (int i = 0; i < sizeErase; i++) {
+			Point point;
+			file >> point;
+			monster.erase.push_back(point);
+		}
+
+		return file;
 	}
 
 	friend ofstream& operator << (ofstream& file, Monster& monster) {

@@ -2,18 +2,6 @@
 
 
 Game game;
-vector<string> namePlayer;
-vector<string> nameSave;
-
-bool CheckNamePlayer(string name) {
-	for (string sign : namePlayer) {
-		if (name == sign) {
-			cout << "Please give another name, this one existed!";
-			return true;
-		}
-	}
-	return false;
-}
 
 bool BinarySearch(vector<int> v, int l, int r, int x)
 {
@@ -41,49 +29,10 @@ void Insert(vector<int>& v, int x) {
 	v.insert(v.begin() + l, x);
 }
 
-void GameOver() {
-	int cnt = 15;
-	while (cnt != 0) {
-		for (int i = 1; i < game.snake->tail.size(); i++) {
-			if (cnt % 2 == 0) {
-				int num = (i - 1) % game.snake->cell.size();
-				if (num < 8)
-					TextColor(Red);
-				else if (num < 16)
-					TextColor(DarkCyan);
-				else if (num < 24)
-					TextColor(DarkGreen);
-				else if (num < 32)
-					TextColor(DarkYellow);
-				else
-					TextColor(Pink);
-				GotoXY(game.snake->tail[i].x + CornerX, game.snake->tail[i].y + CornerY);
-				cout << (game.snake->cell[i - 1] - '0') % game.snake->cell.size();
-			}
-			else {
-				GotoXY(game.snake->tail[i].x + CornerX, game.snake->tail[i].y + CornerY);
-				cout << ' ';
-			}
-		}
-		Sleep(150);
-		cnt--;
-	}
-	Sleep(1000);
-	ofstream file;
-	file.open("Rank.txt", ios::app);
-	file << namePlayer.back() << endl;
-	file << game.level << endl;
-	file << game.score << endl;
-	file << game.currentTime << endl;
-	file.close();
-
-}
-
 int Level_01(Snake*& snake)
 {
 	game.level = 1;
 	snake->pos = { 5, HEIGHTMAP / 2 };
-	snake->tail.clear();
 	for (int i = 0; i <= 1; i++) {
 		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
 	}
@@ -94,7 +43,6 @@ int Level_02(Snake*& snake)
 {
 	game.level = 2;
 	snake->pos = { 10, HEIGHTMAP / 2 };
-	snake->tail.clear();
 	for (int i = 0; i <= 8; i++) {
 		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
 	}
@@ -124,7 +72,6 @@ int Level_03(Snake*& snake)
 {
 	game.level = 3;
 	snake->pos = { 20, 2 };
-	snake->tail.clear();
 	for (int i = 0; i <= 16; i++) {
 		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
 	}
@@ -199,7 +146,6 @@ int Level_04(Snake*& snake)
 {
 	game.level = 4;
 	snake->pos = { 25, 20 };
-	snake->tail.clear();
 	for (int i = 0; i <= 24; i++) {
 		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
 	}
@@ -227,7 +173,6 @@ int Level_05(Snake*& snake)
 {
 	game.level = 5;
 	snake->pos = { 35, 1 };
-	snake->tail.clear();
 	for (int i = 0; i <= 32; i++) {
 		snake->tail.push_back({ snake->pos.x - i, snake->pos.y });
 	}
@@ -282,9 +227,10 @@ int Level_05(Snake*& snake)
 	return Target_lv5;
 }
 
-bool DrawLevel_01()
+bool DrawLevel_01(bool playContinue)
 {
-	game.InputLevel(Level_01);
+	if (playContinue == false)
+		game.InputLevel(Level_01);
 	game.DrawMap();
 	while (!game.snake->dead) {
 		game.DrawSnake();
@@ -298,13 +244,14 @@ bool DrawLevel_01()
 		}
 		Sleep(140);
 	}
-	GameOver();
+	game.GameOver();
 	return true;
 }
 
-bool DrawLevel_02()
+bool DrawLevel_02(bool playContinue)
 {
-	game.InputLevel(Level_02);
+	if (playContinue == false)
+		game.InputLevel(Level_02);
 	game.DrawMap();
 	while (!game.snake->dead) {
 		game.DrawSnake();
@@ -318,13 +265,14 @@ bool DrawLevel_02()
 		}
 		Sleep(130);
 	}
-	GameOver();
+	game.GameOver();
 	return true;
 }
 
-bool DrawLevel_03()
+bool DrawLevel_03(bool playContinue)
 {
-	game.InputLevel(Level_03);
+	if (playContinue == false)
+		game.InputLevel(Level_03);
 	game.DrawMap();
 	while (!game.snake->dead) {
 		game.DrawSnake();
@@ -343,13 +291,14 @@ bool DrawLevel_03()
 		}
 		Sleep(120);
 	}
-	GameOver();
+	game.GameOver();
 	return true;
 }
 
-bool DrawLevel_04()
+bool DrawLevel_04(bool playContinue)
 {
-	game.InputLevel(Level_04);
+	if (playContinue == false)
+		game.InputLevel(Level_04);
 	game.DrawMap();
 	while (!game.snake->dead) {
 		game.DrawSnake();
@@ -365,13 +314,14 @@ bool DrawLevel_04()
 		}
 		Sleep(110);
 	}
-	GameOver();
+	game.GameOver();
 	return true;
 }
 
-bool DrawLevel_05()
+bool DrawLevel_05(bool playContinue)
 {
-	game.InputLevel(Level_05);
+	if (playContinue == false)
+		game.InputLevel(Level_05);
 	game.DrawMap();
 	while (!game.snake->dead) {
 		game.DrawSnake();
@@ -387,9 +337,11 @@ bool DrawLevel_05()
 		}
 		Sleep(100);
 	}
-	GameOver();
+	game.GameOver();
 	return true;
 }
+
+
 
 void StartGame()
 {
@@ -397,7 +349,8 @@ void StartGame()
 	FixConsoleWindow();
 	SetConsoleWindow(WIDTHCONSOLE, HEIGHTCONSOLE);
 	MoveCenter();
-	while (Menu(0)) {
+	string fileContinue = "-1";
+	while (Menu(0, fileContinue)) {
 		game.Reset();
 		game.score = 0;
 		GotoXY(0, 0);
@@ -405,26 +358,105 @@ void StartGame()
 		string name;
 		do {
 			cin >> name;
-		} while (CheckNamePlayer(name));
-		namePlayer.push_back(name);
+		} while (game.CheckNamePlayer(name));
+		game.namePlayer.push_back(name);
 		time_t currentTime = time(nullptr);
 		ctime_s(game.currentTime, sizeof(string), &currentTime);
 		
-		if (DrawLevel_01())
+		/*if (DrawLevel_01())
 			continue;
 		if (DrawLevel_02())
 			continue;
 		if (DrawLevel_03())
 			continue;
 		if (DrawLevel_04())
-			continue;
+			continue;*/
 		if (DrawLevel_05())
 			continue;
+
+		ofstream file;
+		file.open("RANK.txt", ios::app);
+		file << game.namePlayer.back() << endl;
+		file << game.level << endl;
+		file << game.score << endl;
+		file << game.currentTime << endl;
+		file.close();
+	}
+	if (fileContinue != "-1") {
+		PlayContinue(fileContinue);
 	}
 }
 
 
-
+void PlayContinue(string fileContinue)
+{
+	GotoXY(0, 0);
+	cout << fileContinue;
+	game.Reset();
+	fileContinue += ".txt";
+	ifstream file(fileContinue);
+	file >> game;
+	file.close();
+	while (true) {
+		if (GetAsyncKeyState(VK_ESCAPE))
+			break;
+	}
+	int levelGame = game.level;
+	if (levelGame == 1) {
+		if (DrawLevel_01(true)) {
+			StartGame();
+			return;
+		}
+	}
+	if (levelGame == 2) {
+		if (DrawLevel_02(true)) {
+			StartGame();
+			return;
+		}
+	}
+	else if (levelGame < 2) {
+		if (DrawLevel_02()) {
+			StartGame();
+			return;
+		}
+	}
+	if (levelGame == 3) {
+		if (DrawLevel_03(true)) {
+			StartGame();
+			return;
+		}
+	}
+	else if (levelGame < 3) {
+		if (DrawLevel_03()) {
+			StartGame();
+			return;
+		}
+	}
+	if (levelGame == 4) {
+		if (DrawLevel_04(true)) {
+			StartGame();
+			return;
+		}
+	}
+	else if (levelGame < 4) {
+		if (DrawLevel_04()) {
+			StartGame();
+			return;
+		}
+	}
+	if (levelGame == 5) {
+		if (DrawLevel_05(true)) {
+			StartGame();
+			return;
+		}
+	}
+	else if (levelGame < 5) {
+		if (DrawLevel_05()) {
+			StartGame();
+			return;
+		}
+	}
+}
 
 
 
@@ -442,6 +474,7 @@ void Game::Reset()
 	gate = false;
 	time = 0;
 	color = 0;
+	snake->tail.clear();
 	snake->dir = RIGHT;
 	snake->dead = false;
 	snake->stunned = false;
@@ -564,6 +597,17 @@ bool Game::FruitMeetMonster() {
 }
 
 
+bool Game::CheckNamePlayer(string name) {
+	for (string sign : namePlayer) {
+		if (name == sign) {
+			cout << "Please give another name, this one existed!";
+			return true;
+		}
+	}
+	return false;
+}
+
+
 bool Game::CheckNameSave(string name)
 {
 	for (string sign : nameSave) {
@@ -579,6 +623,13 @@ bool Game::CheckNameSave(string name)
 void Game::LoadGame(string name)
 {
 	nameSave.push_back(name);
+	ofstream load("LOADGAME.txt", ios::app);
+	load << name << endl;
+	load << level << endl;
+	load << score << endl;
+	load << currentTime << endl;
+	load.close();
+
 	name += ".txt";
 	ofstream file(name, ios::out);
 	file << game;
@@ -764,10 +815,20 @@ void Game::DrawMap()
 	for (int i = 0; i < WIDTHMAP + 2; i++)
 		cout << char(223);
 
-	// Fruit
-	GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
-	TextColor(Red);
-	cout << char(1);
+	// Fruit / Gate
+	if (gate == false) {
+		GotoXY(fruit->pos.x + CornerX, fruit->pos.y + CornerY);
+		TextColor(Red);
+		cout << char(1);
+	}
+	else {
+		GotoXY(posGate[0].x + CornerX, posGate[0].y + CornerY);
+		cout << char(179);
+		for (int i = 1; i <= 7; i++) {
+			GotoXY(posGate[i].x + CornerX, posGate[i].y + CornerY);
+			cout << char(219);
+		}
+	}
 
 	// WALL
 	TextColor(MainColor);
@@ -906,4 +967,43 @@ void Game::DrawMonster() {
 			}
 		}
 	}
+}
+
+
+void Game::GameOver() {
+	int cnt = 15;
+	while (cnt != 0) {
+		for (int i = 1; i < snake->tail.size(); i++) {
+			if (cnt % 2 == 0) {
+				int num = (i - 1) % snake->cell.size();
+				if (num < 8)
+					TextColor(Red);
+				else if (num < 16)
+					TextColor(DarkCyan);
+				else if (num < 24)
+					TextColor(DarkGreen);
+				else if (num < 32)
+					TextColor(DarkYellow);
+				else
+					TextColor(Pink);
+				GotoXY(snake->tail[i].x + CornerX, snake->tail[i].y + CornerY);
+				cout << (snake->cell[i - 1] - '0') % snake->cell.size();
+			}
+			else {
+				GotoXY(snake->tail[i].x + CornerX, snake->tail[i].y + CornerY);
+				cout << ' ';
+			}
+		}
+		Sleep(150);
+		cnt--;
+	}
+	Sleep(1000);
+	ofstream file;
+	file.open("RANK.txt", ios::app);
+	file << namePlayer.back() << endl;
+	file << level << endl;
+	file << score << endl;
+	file << currentTime << endl;
+	file.close();
+
 }

@@ -4,8 +4,10 @@
 int main() {
     system("color F0");
 
-    ofstream file("Rank.txt", ios::out | ios::trunc);
-    file.close();
+    ofstream load("LOADGAME.txt");
+    load.close();
+    ofstream rank("RANK.txt");
+    rank.close();
 
     StartGame();
 

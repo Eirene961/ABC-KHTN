@@ -46,7 +46,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="rank.txt">
+    <Text Include="RANK.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="LOADGAME.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

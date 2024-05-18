@@ -8,6 +8,7 @@
 #include "Snake.h"
 #include <fstream>
 #include <string.h>
+#include <sstream>
 
 #define WIDTHCONSOLE 1100
 #define HEIGHTCONSOLE 700
@@ -16,20 +17,18 @@
 #define Target_lv3 230
 #define Target_lv4 310
 #define Target_lv5 390
-bool CheckNamePlayer(string name);
 bool BinarySearch(vector<int> v, int l, int r, int x);
 void Insert(vector<int>& v, int x);
-void GameOver();
 int Level_01(Snake*& snake);
 int Level_02(Snake*& snake);
 int Level_03(Snake*& snake);
 int Level_04(Snake*& snake);
 int Level_05(Snake*& snake);
-bool DrawLevel_01();
-bool DrawLevel_02();
-bool DrawLevel_03();
-bool DrawLevel_04();
-bool DrawLevel_05();
+bool DrawLevel_01(bool playContinue = false);
+bool DrawLevel_02(bool playContinue = false);
+bool DrawLevel_03(bool playContinue = false);
+bool DrawLevel_04(bool playContinue = false);
+bool DrawLevel_05(bool playContinue = false);
 struct Game
 {
 	Snake* snake;
@@ -46,7 +45,9 @@ struct Game
 	int color;
 	vector<pair<Point,Point>> teleport;
 	vector<Point> poison;
-	
+
+	vector<string> namePlayer;
+	vector<string> nameSave;
 
 	Game() {
 		snake = new Snake;
@@ -64,6 +65,80 @@ struct Game
 		delete fruit;
 	}
 
+	friend ifstream& operator >> (ifstream& file, Game& game) {
+		cout << "1." << endl;
+		file >> *game.snake;
+		cout << "2." << endl;
+		file >> *game.fruit;
+		cout << "3." << endl;
+		file >> game.level;
+		cout << "4." << endl;
+		file >> game.score;
+		cout << "5." << endl;
+		file >> game.target;
+		cout << "6." << endl;
+		file.ignore();
+		file.getline(game.currentTime, 26);
+		cout << "7." << endl;
+		file >> game.gate;
+		cout << "8." << endl;
+		if (game.gate) {
+			for (int i = 0; i <= 7; i++) {
+				Point point;
+				file >> point;
+				game.posGate.push_back(point);
+			}
+		}
+		cout << "9." << endl;
+		file.ignore();
+		for (int i = 0; i < WIDTHMAP; i++) {
+			string s;
+			getline(file, s);
+			stringstream ss(s);
+			string token;
+			while (ss >> token) {
+				game.wall[i].push_back(stoi(token));
+			}
+		}
+		cout << "10." << endl;
+		file >> game.time;
+		int sizeMonster;
+		file >> sizeMonster;
+		cout << "11." << endl;
+		for (int i = 0; i < sizeMonster; i++) {
+			Monster monster;
+			file >> monster;
+			game.monsterList.push_back(monster);
+		}
+		cout << "12." << endl;
+		file >> game.color;
+		int sizeTele;
+		file >> sizeTele;
+		cout << "13." << endl;
+		for (int i = 0; i < sizeTele; i++) {
+			pair<Point, Point> tele;
+			file >> tele.first;
+			file >> tele.second;
+			game.teleport.push_back((tele));
+		}
+		cout << "14." << endl;
+		int sizePoison;
+		file >> sizePoison;
+		cout << "15." << endl;
+		for (int i = 0; i < sizePoison; i++) {
+			Point point;
+			file >> point;
+			game.poison.push_back(point);
+		}
+		cout << "16." << endl;
+
+		char _;
+		file >> _;
+
+
+		return file;
+	}
+
 	friend ofstream& operator << (ofstream& file, Game& game) {
 		file << *game.snake;
 		file << *game.fruit;
@@ -72,15 +147,13 @@ struct Game
 		file << game.target << endl;
 		file << game.currentTime;
 		file << game.gate << endl;
-		int sizeGate = game.posGate.size();
-		file << sizeGate << endl;
-		for (int i = 0; i < sizeGate; i++)
-			file << game.posGate[i];
+		if (game.gate) {
+			for (int i = 0; i <= 7; i++)
+				file << game.posGate[i];
+		}
 		for (int i = 0; i < WIDTHMAP; i++) {
 			for (int j = 0; j < game.wall[i].size(); j++) {
-				file << game.wall[i][j];
-				if (j != game.wall[i].size() - 1)
-					file << ' ';
+				file << game.wall[i][j] << ' ';
 			}
 			file << endl;
 		}
@@ -113,6 +186,7 @@ struct Game
 	void Teleport();
 	bool SnakeMeetMonster();
 	bool FruitMeetMonster();
+	bool CheckNamePlayer(string name);
 	bool CheckNameSave(string name);
 	void LoadGame(string name);
 	bool Pause();
@@ -121,8 +195,10 @@ struct Game
 	void DrawTeleport();
 	void DrawSnake();
 	void DrawMonster();
+	void GameOver();
 };
 void StartGame();
+void PlayContinue(string fileContinue);
 
 
 #endif
