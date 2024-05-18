@@ -349,30 +349,77 @@ void StartGame()
 	FixConsoleWindow();
 	SetConsoleWindow(WIDTHCONSOLE, HEIGHTCONSOLE);
 	MoveCenter();
-	string fileContinue = "-1";
-	while (Menu(0, fileContinue)) {
-		game.Reset();
-		game.score = 0;
-		GotoXY(0, 0);
-		cout << "Enter name: ";
-		string name;
-		do {
-			cin >> name;
-		} while (game.CheckNamePlayer(name));
-		game.namePlayer.push_back(name);
-		time_t currentTime = time(nullptr);
-		ctime_s(game.currentTime, sizeof(string), &currentTime);
-		
-		/*if (DrawLevel_01())
-			continue;
-		if (DrawLevel_02())
-			continue;
-		if (DrawLevel_03())
-			continue;
-		if (DrawLevel_04())
-			continue;*/
-		if (DrawLevel_05())
-			continue;
+	int ans;
+	while ((ans = Menu(0)) != -2) {
+		if (ans == -1) {
+			game.Reset();
+			game.score = 0;
+			GotoXY(0, 0);
+			cout << "Enter name: ";
+			string name;
+			do {
+				cin >> name;
+			} while (game.CheckNamePlayer(name));
+			game.namePlayer.push_back(name);
+			time_t currentTime = time(nullptr);
+			ctime_s(game.currentTime, sizeof(string), &currentTime);
+
+			if (DrawLevel_01())
+				continue;
+			if (DrawLevel_02())
+				continue;
+			if (DrawLevel_03())
+				continue;
+			if (DrawLevel_04())
+				continue;
+			if (DrawLevel_05())
+				continue;
+		}
+		else {
+			string fileContinue = game.nameSave[ans];
+			fileContinue += ".txt";
+			ifstream file(fileContinue);
+			game.Reset();
+			file >> game;
+			file.close();
+			int levelGame = game.level;
+			if (levelGame == 1) {
+				if (DrawLevel_01(true))
+					continue;
+			}
+			if (levelGame == 2) {
+				if (DrawLevel_02(true))
+					continue;
+			}
+			else if (levelGame < 2) {
+				if (DrawLevel_02())
+					continue;
+			}
+			if (levelGame == 3) {
+				if (DrawLevel_03(true))
+					continue;
+			}
+			else if (levelGame < 3) {
+				if (DrawLevel_03())
+					continue;
+			}
+			if (levelGame == 4) {
+				if (DrawLevel_04(true))
+					continue;
+			}
+			else if (levelGame < 4) {
+				if (DrawLevel_04())
+					continue;
+			}
+			if (levelGame == 5) {
+				if (DrawLevel_05(true))
+					continue;
+			}
+			else if (levelGame < 5) {
+				if (DrawLevel_05())
+					continue;
+			}
+		}
 
 		ofstream file;
 		file.open("RANK.txt", ios::app);
@@ -382,84 +429,7 @@ void StartGame()
 		file << game.currentTime << endl;
 		file.close();
 	}
-	if (fileContinue != "-1") {
-		PlayContinue(fileContinue);
-	}
 }
-
-
-void PlayContinue(string fileContinue)
-{
-	GotoXY(0, 0);
-	cout << fileContinue;
-	game.Reset();
-	fileContinue += ".txt";
-	ifstream file(fileContinue);
-	file >> game;
-	file.close();
-	while (true) {
-		if (GetAsyncKeyState(VK_ESCAPE))
-			break;
-	}
-	int levelGame = game.level;
-	if (levelGame == 1) {
-		if (DrawLevel_01(true)) {
-			StartGame();
-			return;
-		}
-	}
-	if (levelGame == 2) {
-		if (DrawLevel_02(true)) {
-			StartGame();
-			return;
-		}
-	}
-	else if (levelGame < 2) {
-		if (DrawLevel_02()) {
-			StartGame();
-			return;
-		}
-	}
-	if (levelGame == 3) {
-		if (DrawLevel_03(true)) {
-			StartGame();
-			return;
-		}
-	}
-	else if (levelGame < 3) {
-		if (DrawLevel_03()) {
-			StartGame();
-			return;
-		}
-	}
-	if (levelGame == 4) {
-		if (DrawLevel_04(true)) {
-			StartGame();
-			return;
-		}
-	}
-	else if (levelGame < 4) {
-		if (DrawLevel_04()) {
-			StartGame();
-			return;
-		}
-	}
-	if (levelGame == 5) {
-		if (DrawLevel_05(true)) {
-			StartGame();
-			return;
-		}
-	}
-	else if (levelGame < 5) {
-		if (DrawLevel_05()) {
-			StartGame();
-			return;
-		}
-	}
-}
-
-
-
 
 
 
@@ -622,7 +592,8 @@ bool Game::CheckNameSave(string name)
 
 void Game::LoadGame(string name)
 {
-	nameSave.push_back(name);
+	if (nameSave.empty() || nameSave.back() != name)
+		nameSave.push_back(name);
 	ofstream load("LOADGAME.txt", ios::app);
 	load << name << endl;
 	load << level << endl;
@@ -691,18 +662,14 @@ bool Game::Pause()
 				cursorPos++;
 			break;
 		case '\r':
-			string name;
 			switch (cursorPos) {
 			case 0:
 				return true;
 				break;
 			case 1:
+				LoadGame(game.namePlayer.back());
 				GotoXY(0, 0);
-				cout << "Enter name: ";
-				do {
-					cin >> name;
-				} while (CheckNameSave(name));
-				LoadGame(name);
+				cout << "Success!";
 				break;
 			case 2:
 				break;

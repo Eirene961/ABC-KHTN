@@ -2,7 +2,7 @@
 
 
 
-bool Continue(string& nameFile)
+int Continue()
 {
 	system("cls");
 
@@ -64,7 +64,10 @@ bool Continue(string& nameFile)
 		file >> tmp.score;
 		file.ignore();
 		getline(file, tmp.time);
-		load.push_back(tmp);
+		if (!load.empty() && load.back().name == tmp.name)
+			load.back() = tmp;
+		else
+			load.push_back(tmp);
 	}
 	file.close();
 	load.pop_back();
@@ -101,12 +104,11 @@ bool Continue(string& nameFile)
 			quit = true;
 			break;
 		case '\r':
-			nameFile = load[cursorPos].name;
-			return true;
+			return cursorPos;
 			break;
 		}
 	} while (!quit);
-	return false;
+	return -1;
 }
 
 void Rank()
@@ -171,7 +173,10 @@ void Rank()
 		file >> tmp.score;
 		file.ignore();
 		getline(file, tmp.time);
-		save.push_back(tmp);
+		if (!save.empty() && save.back().name == tmp.name)
+			save.back() = tmp;
+		else
+			save.push_back(tmp);
 	}
 	file.close();
 	save.pop_back();
@@ -186,7 +191,8 @@ void Rank()
 		cout << save[i].time;
 	}
 	while (true) {
-		if (GetAsyncKeyState(VK_ESCAPE))
+		char input = tolower(_getch());
+		if (input == '\x1B')
 			break;
 	}
 }
@@ -201,7 +207,7 @@ void Setting()
 
 }
 
-bool Menu(int cursorPos, string& fileContinue)
+int Menu(int cursorPos)
 {
 	system("color F0");
 	system("cls");
@@ -279,6 +285,7 @@ bool Menu(int cursorPos, string& fileContinue)
 		}
 		TextColor(Grey);
 		char input = tolower(_getch());
+		int val;
 		switch (input) {
 		case 'w':
 			if (cursorPos > 0)
@@ -291,26 +298,26 @@ bool Menu(int cursorPos, string& fileContinue)
 		case '\r':
 			switch (cursorPos) {
 			case 0:
-				return true;
+				return -1;
 				break;
 			case 1:
-				if (Continue(fileContinue)) {
-					quit = true;
-				}
+				val = Continue();
+				if (val == -1)
+					return Menu(cursorPos);
 				else
-					return Menu(cursorPos, fileContinue);
+					return val;
 				break;
 			case 2:
 				Rank();
-				return Menu(cursorPos, fileContinue);
+				return Menu(cursorPos);
 				break;
 			case 3:
 				About();
-				return Menu(cursorPos, fileContinue);
+				return Menu(cursorPos);
 				break;
 			case 4:
 				Setting();
-				return Menu(cursorPos, fileContinue);
+				return Menu(cursorPos);
 				break;
 			case 5:
 				quit = true;
@@ -319,5 +326,5 @@ bool Menu(int cursorPos, string& fileContinue)
 			}
 		}
 	} while (!quit);
-	return false;
+	return -2;
 }

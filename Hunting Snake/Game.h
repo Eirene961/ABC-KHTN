@@ -9,6 +9,7 @@
 #include <fstream>
 #include <string.h>
 #include <sstream>
+using namespace std;
 
 #define WIDTHCONSOLE 1100
 #define HEIGHTCONSOLE 700
@@ -145,7 +146,7 @@ struct Game
 		file << game.level << endl;
 		file << game.score << endl;
 		file << game.target << endl;
-		file << game.currentTime;
+		file << game.currentTime << endl;
 		file << game.gate << endl;
 		if (game.gate) {
 			for (int i = 0; i <= 7; i++)
@@ -198,7 +199,6 @@ struct Game
 	void GameOver();
 };
 void StartGame();
-void PlayContinue(string fileContinue);
 
 
 #endif
