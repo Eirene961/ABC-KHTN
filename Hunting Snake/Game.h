@@ -67,22 +67,14 @@ struct Game
 	}
 
 	friend ifstream& operator >> (ifstream& file, Game& game) {
-		cout << "1." << endl;
 		file >> *game.snake;
-		cout << "2." << endl;
 		file >> *game.fruit;
-		cout << "3." << endl;
 		file >> game.level;
-		cout << "4." << endl;
 		file >> game.score;
-		cout << "5." << endl;
 		file >> game.target;
-		cout << "6." << endl;
 		file.ignore();
 		file.getline(game.currentTime, 26);
-		cout << "7." << endl;
 		file >> game.gate;
-		cout << "8." << endl;
 		if (game.gate) {
 			for (int i = 0; i <= 7; i++) {
 				Point point;
@@ -90,7 +82,6 @@ struct Game
 				game.posGate.push_back(point);
 			}
 		}
-		cout << "9." << endl;
 		file.ignore();
 		for (int i = 0; i < WIDTHMAP; i++) {
 			string s;
@@ -101,37 +92,30 @@ struct Game
 				game.wall[i].push_back(stoi(token));
 			}
 		}
-		cout << "10." << endl;
 		file >> game.time;
 		int sizeMonster;
 		file >> sizeMonster;
-		cout << "11." << endl;
 		for (int i = 0; i < sizeMonster; i++) {
 			Monster monster;
 			file >> monster;
 			game.monsterList.push_back(monster);
 		}
-		cout << "12." << endl;
 		file >> game.color;
 		int sizeTele;
 		file >> sizeTele;
-		cout << "13." << endl;
 		for (int i = 0; i < sizeTele; i++) {
 			pair<Point, Point> tele;
 			file >> tele.first;
 			file >> tele.second;
 			game.teleport.push_back((tele));
 		}
-		cout << "14." << endl;
 		int sizePoison;
 		file >> sizePoison;
-		cout << "15." << endl;
 		for (int i = 0; i < sizePoison; i++) {
 			Point point;
 			file >> point;
 			game.poison.push_back(point);
 		}
-		cout << "16." << endl;
 
 		char _;
 		file >> _;

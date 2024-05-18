@@ -428,6 +428,55 @@ void StartGame()
 		file << game.score << endl;
 		file << game.currentTime << endl;
 		file.close();
+
+
+		int x = 38;
+		int y = 7;
+		system("color F0");
+		system("cls");
+		HideCursor();
+		int color = 0;
+		int time = 0;
+
+		while (time < 15) {
+			y = CornerY + 1;
+			color %= 3;
+			if (color == 0)
+				TextColor(Red);
+			else if (color == 1)
+				TextColor(DarkGreen);
+			else
+				TextColor(DarkYellow);
+			color++;
+			time++;
+			GotoXY(x, y++);
+			cout << " ____  _  _   __   _  _  _ _      ___   __  ___          ";
+			GotoXY(x, y++);
+			cout << "(_  _)( )( ) (  ) ( \\( )( ) )    (  _) /  \\(   )         ";
+			GotoXY(x, y++);
+			cout << "  )(   )__(  /__\\  )  (  )  \\     ) _)( () ))  \\         ";
+			GotoXY(x, y++);
+			cout << " (__) (_)(_)(_)(_)(_)\\_)(_)\\_)   (_)   \\__/(_)\\_)        ";
+			y++;
+			GotoXY(x, y++);
+			cout << " ___  __     __   _  _  __  _  _  __     ____  _  _  ___ ";
+			GotoXY(x, y++);
+			cout << "(  ,\\(  )   (  ) ( \\/ )(  )( \\( )/ _)   (_  _)( )( )(  _)";
+			GotoXY(x, y++);
+			cout << " ) _/ )(__  /__\\  \\  /  )(  )  (( (/\\     )(   )__(  ) _)";
+			GotoXY(x, y++);
+			cout << "(_)  (____)(_)(_)(__/  (__)(_)\\_)\\__/    (__) (_)(_)(___)";
+			y++;
+			GotoXY(x, y++);
+			cout << "  __   __   __  __  ___                                 ";
+			GotoXY(x, y++);
+			cout << " / _) (  ) (  \\/  )(  _)                                ";
+			GotoXY(x, y++);
+			cout << "( (/\\ /__\\  )    (  ) _)                                ";
+			GotoXY(x, y++);
+			cout << " \\__/(_)(_)(_/\\/\\_)(___)                                ";
+			Sleep(200);
+		}
 	}
 }
 
@@ -610,10 +659,10 @@ void Game::LoadGame(string name)
 
 bool Game::Pause()
 {
-	int width = 30;
-	int height = 10;
-	int x = CornerX + WIDTHMAP / 3;
-	int y = CornerY + HEIGHTMAP / 4;
+	int width = 19;
+	int height = 8;
+	int x = CornerX + WIDTHMAP / 3 + 5;
+	int y = CornerY + HEIGHTMAP / 4 + 2;
 
 	TextColor(MainColor);
 	BackgroundColor(Yellow);
@@ -638,17 +687,31 @@ bool Game::Pause()
 	for (int i = 1; i < width - 1; i++)
 		cout << char(220);
 
-	vector<string> selections = { "CONTINUE", "SAVE GAME", "MUSIC", "EXIT" };
+	GotoXY(x + 1, y + 2);
+	for (int i = 1; i < width - 1; i++)
+		cout << char(196);
+	GotoXY(x + 1, y + 4);
+	for (int i = 1; i < width - 1; i++)
+		cout << char(196);
+	GotoXY(x + 1, y + 6);
+	for (int i = 1; i < width - 1; i++)
+		cout << char(196);
+	
+
+	vector<string> selections = { "CONTINUE ", "SAVE GAME", "MUSIC    ", "EXIT     " };
 	bool quit = false;
 	int cursorPos = 0;
 	do {
 		for (int i = 0; i < selections.size(); i++) {
-			if (i == cursorPos)
+			GotoXY(x + 2, y + 1 + 2 * i);
+			if (i == cursorPos) {
 				TextColor(Pink);
-			else
+				cout << "-> " << selections[i] << " <-";
+			}
+			else {
 				TextColor(Grey);
-			GotoXY(x + 3, y + i + 1);
-			cout << selections[i];
+				cout << "   " << selections[i] << "   ";
+			}
 		}
 		TextColor(Grey);
 		char input = tolower(_getch());
