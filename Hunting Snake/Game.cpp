@@ -493,7 +493,7 @@ void StartGame()
 
 		ofstream file;
 		file.open("RANK.txt", ios::app);
-		file << game.nameGame;
+		file << game.nameGame << endl;
 		file << game.level << endl;
 		file << game.score << endl;
 		file << game.currentTime << endl;
