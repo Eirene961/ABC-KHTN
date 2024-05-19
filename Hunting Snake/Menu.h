@@ -3,9 +3,11 @@
 
 
 #include "Console.h"
+#include "Sound.h"
 #include <iostream>
 #include <conio.h>
 #include <vector>
+#include <algorithm>
 #include <fstream>
 #include <string>
 #include <mmsystem.h>
@@ -42,12 +44,13 @@ struct Save {
 	string time;
 };
 
+bool cmp(Save a, Save b);
 
 int Continue();
 void Rank();
 void About();
-void Setting();
-int Menu(int cursorPos);
+void Setting(std::thread& music);
+int Menu(int cursorPos, std::thread& music);
 
 
 

@@ -29,6 +29,14 @@ void Insert(vector<int>& v, int x) {
 	v.insert(v.begin() + l, x);
 }
 
+void EatingSound()
+{
+	while (true) {
+		if (game.snake->eatingSound == true)
+			PlayEatingSound();
+	}
+}
+
 int Level_01(Snake*& snake)
 {
 	game.level = 1;
@@ -229,9 +237,14 @@ int Level_05(Snake*& snake)
 
 bool DrawLevel_01(bool playContinue)
 {
+	system("cls");
+	system("color F0");
+	TextColor(MainColor);
+	HideCursor();
 	if (playContinue == false)
 		game.InputLevel(Level_01);
 	game.DrawMap();
+	game.DrawInstruction();
 	while (!game.snake->dead) {
 		game.DrawSnake();
 		game.snake->Move();
@@ -250,9 +263,14 @@ bool DrawLevel_01(bool playContinue)
 
 bool DrawLevel_02(bool playContinue)
 {
+	system("cls");
+	system("color F0");
+	TextColor(MainColor);
+	HideCursor();
 	if (playContinue == false)
 		game.InputLevel(Level_02);
 	game.DrawMap();
+	game.DrawInstruction();
 	while (!game.snake->dead) {
 		game.DrawSnake();
 		game.snake->Move();
@@ -271,9 +289,14 @@ bool DrawLevel_02(bool playContinue)
 
 bool DrawLevel_03(bool playContinue)
 {
+	system("cls");
+	system("color F0");
+	TextColor(MainColor);
+	HideCursor();
 	if (playContinue == false)
 		game.InputLevel(Level_03);
 	game.DrawMap();
+	game.DrawInstruction();
 	while (!game.snake->dead) {
 		game.DrawSnake();
 		game.time %= 2;
@@ -297,9 +320,14 @@ bool DrawLevel_03(bool playContinue)
 
 bool DrawLevel_04(bool playContinue)
 {
+	system("cls");
+	system("color F0");
+	TextColor(MainColor);
+	HideCursor();
 	if (playContinue == false)
 		game.InputLevel(Level_04);
 	game.DrawMap();
+	game.DrawInstruction();
 	while (!game.snake->dead) {
 		game.DrawSnake();
 		game.DrawMonster();
@@ -320,9 +348,14 @@ bool DrawLevel_04(bool playContinue)
 
 bool DrawLevel_05(bool playContinue)
 {
+	system("cls");
+	system("color F0");
+	TextColor(MainColor);
+	HideCursor();
 	if (playContinue == false)
 		game.InputLevel(Level_05);
 	game.DrawMap();
+	game.DrawInstruction();
 	while (!game.snake->dead) {
 		game.DrawSnake();
 		game.DrawMonster();
@@ -343,24 +376,57 @@ bool DrawLevel_05(bool playContinue)
 
 
 
-void StartGame()
+void StartGame(std::thread& music)
 {
 	srand(time(NULL));
 	FixConsoleWindow();
 	SetConsoleWindow(WIDTHCONSOLE, HEIGHTCONSOLE);
 	MoveCenter();
 	int ans;
-	while ((ans = Menu(0)) != -2) {
+	while ((ans = Menu(0, music)) != -2) {
 		if (ans == -1) {
 			game.Reset();
 			game.score = 0;
-			GotoXY(0, 0);
-			cout << "Enter name: ";
+			int x = 38;
+			int y = 20;
+			int width = 48;
+			int height = 4;
+			TextColor(MainColor);
+			BackgroundColor(Yellow);
+			GotoXY(x, y);
+			for (int i = 1; i <= width; i++) {
+				if (i == 1 || i == width)
+					cout << char(219);
+				else
+					cout << char(223);
+
+			}
+			for (int i = 1; i <= height; i++) {
+				GotoXY(x, y + i);
+				for (int j = 1; j <= width; j++) {
+					if (j == 1 || j == width)
+						cout << char(219);
+					else
+						cout << ' ';
+				}
+			}
+			GotoXY(x + 1, y + height);
+			for (int i = 1; i < width - 1; i++)
+				cout << char(220);
+
+			GotoXY(x + 2, y + 1);
+			cout << "Enter name (No punctuation and no spaces):";
+			GotoXY(x + 4, y + 2);
+			BackgroundColor(White);
+			cout << "                                      ";
+			GotoXY(x + 4, y + 2);
+			TextColor(MainColor);
 			string name;
 			do {
 				cin >> name;
 			} while (game.CheckNamePlayer(name));
 			game.namePlayer.push_back(name);
+			game.nameGame = name;
 			time_t currentTime = time(nullptr);
 			ctime_s(game.currentTime, sizeof(string), &currentTime);
 
@@ -377,6 +443,7 @@ void StartGame()
 		}
 		else {
 			string fileContinue = game.nameSave[ans];
+			game.nameGame = game.nameSave[ans];
 			fileContinue += ".txt";
 			ifstream file(fileContinue);
 			game.Reset();
@@ -423,7 +490,7 @@ void StartGame()
 
 		ofstream file;
 		file.open("RANK.txt", ios::app);
-		file << game.namePlayer.back() << endl;
+		file << game.nameGame;
 		file << game.level << endl;
 		file << game.score << endl;
 		file << game.currentTime << endl;
@@ -595,6 +662,10 @@ bool Game::SnakeMeetMonster() {
 bool Game::FruitMeetMonster() {
 	for (Monster& monster : monsterList) {
 		for (Point point : monster.pos) {
+			for (int i = 0; i < poison.size(); i++) {
+				if (point == poison[i])
+					poison.erase(poison.begin() + i);
+			}
 			if (point == fruit->pos) {
 				if (monster.type != WALL) {
 					score -= 20;
@@ -619,19 +690,13 @@ bool Game::FruitMeetMonster() {
 bool Game::CheckNamePlayer(string name) {
 	for (string sign : namePlayer) {
 		if (name == sign) {
+			GotoXY(40, 23);
+			BackgroundColor(Yellow);
 			cout << "Please give another name, this one existed!";
-			return true;
-		}
-	}
-	return false;
-}
-
-
-bool Game::CheckNameSave(string name)
-{
-	for (string sign : nameSave) {
-		if (name == sign) {
-			cout << "Please give another name, this one existed!";
+			GotoXY(42, 22);
+			BackgroundColor(White);
+			cout << "                                      ";
+			GotoXY(42, 22);
 			return true;
 		}
 	}
@@ -641,7 +706,14 @@ bool Game::CheckNameSave(string name)
 
 void Game::LoadGame(string name)
 {
-	if (nameSave.empty() || nameSave.back() != name)
+	bool check = true;
+	for (string nameLoad : nameSave) {
+		if (nameLoad == name) {
+			check = false;
+			break;
+		}
+	}
+	if (check)
 		nameSave.push_back(name);
 	ofstream load("LOADGAME.txt", ios::app);
 	load << name << endl;
@@ -659,6 +731,7 @@ void Game::LoadGame(string name)
 
 bool Game::Pause()
 {
+
 	int width = 19;
 	int height = 8;
 	int x = CornerX + WIDTHMAP / 3 + 5;
@@ -730,9 +803,10 @@ bool Game::Pause()
 				return true;
 				break;
 			case 1:
-				LoadGame(game.namePlayer.back());
-				GotoXY(0, 0);
-				cout << "Success!";
+				LoadGame(nameGame);
+				GotoXY((CornerX + WIDTHMAP) / 2 - 1, CornerY - 2);
+				TextColor(Red);
+				cout << "SUCCESS!";
 				break;
 			case 2:
 				break;
@@ -757,6 +831,7 @@ bool Game::Logic() {
 
 	if (snake->pos == fruit->pos && gate == false) {
 		score += 10;
+		snake->eatingSound = true;
 		GotoXY(CornerX + WIDTHMAP + 12, CornerY + 3);
 		TextColor(MainColor);
 		BackgroundColor(Yellow);
@@ -820,24 +895,25 @@ bool Game::Logic() {
 		}
 	}
 	Teleport();
+	snake->eatingSound = false;
 	return false;
 }
 
 
 void Game::DrawMap()
 {
-	system("cls");
-	system("color F0");
+	int x = CornerX - 2;
+	int y = 0;
+
 	TextColor(MainColor);
-	HideCursor();
+	BackgroundColor(MainBackground);
 
 	// MAP
-	GotoXY(CornerX - 1, CornerY - 1);
-	for (int i = 0; i < WIDTHMAP + 2; i++)
-		cout << char(220);
 	for (int i = 0; i < HEIGHTMAP; i++) {
 		GotoXY(CornerX - 1, CornerY + i);
 		cout << char(219);
+		for (int i = 0; i < WIDTHMAP; i++)
+			cout << ' ';
 		GotoXY(CornerX + WIDTHMAP, CornerY + i);
 		cout << char(219);
 	}
@@ -873,14 +949,111 @@ void Game::DrawMap()
 	DrawTeleport();
 
 
-
-
-	// INSTRUCTION
+	GotoXY((CornerX + WIDTHMAP) / 2 - 1, CornerY - 2);
+	TextColor(Red);
+	BackgroundColor(Yellow);
+	cout << "        ";
 	TextColor(MainColor);
-	int x = CornerX + WIDTHMAP + 3;
-	GotoXY(x, 1);
-	for (int j = 0; j <= 32; j++)
+	BackgroundColor(MainBackground);
+}
+
+
+void Game::DrawInstruction()
+{
+	TextColor(MainColor);
+	GotoXY(CornerX - 1, CornerY - 1);
+	for (int i = 0; i < WIDTHMAP + 2; i++)
 		cout << char(220);
+	int width = WIDTHMAP + 2;
+	int height = 6;
+
+	int x = CornerX - 1, y = 1;
+
+	BackgroundColor(Yellow);
+	TextColor(MainColor);
+	GotoXY(x, y);
+	for (int i = 1; i <= width; i++) {
+		if (i == 1 || i == width)
+			cout << char(219);
+		else
+			cout << char(223);
+
+	}
+	for (int i = 1; i < height; i++) {
+		GotoXY(x, y + i);
+		for (int j = 1; j <= width; j++) {
+			if (j == 1 || j == width)
+				cout << char(219);
+			else
+				cout << ' ';
+		}
+	}
+	GotoXY(x, y + height);
+	BackgroundColor(MainBackground);
+	for (int i = 1; i <= width; i++)
+		cout << char(223);
+	for (int i = 0; i < 3; i++) {
+		GotoXY(CornerX + 10, y + height + i);
+		for (int j = 0; j < 2; j++)
+			cout << char(219);
+		GotoXY(CornerX + 15, y + height + i);
+		for (int j = 0; j < 2; j++)
+			cout << char(219);
+		GotoXY(WIDTHMAP - CornerX - 4, y + height + i);
+		for (int j = 0; j < 2; j++)
+			cout << char(219);
+		GotoXY(WIDTHMAP - CornerX + 1, y + height + i);
+		for (int j = 0; j < 2; j++)
+			cout << char(219);
+	}
+	
+	x += WIDTHMAP / 3;
+
+	BackgroundColor(Yellow);
+	GotoXY(x, y + height);
+	for (int i = 0; i < WIDTHMAP / 2 - 10; i++) {
+		if (i == 0 || i == WIDTHMAP / 2 - 11)
+			cout << char(219);
+		else
+			cout << char(223);
+	}
+	GotoXY(x, y + height + 1);
+	for (int i = 0; i < WIDTHMAP / 2 - 10; i++) {
+		if (i == 0 || i == WIDTHMAP / 2 - 11)
+			cout << char(219);
+		else
+			cout << ' ';
+	}
+	GotoXY(x, y + height + 2);
+	for (int i = 0; i < WIDTHMAP / 2 - 10; i++) {
+		if (i == 0 || i == WIDTHMAP / 2 - 11)
+			cout << char(219);
+		else
+			cout << char(220);
+	}
+
+	x = CornerX + 5;
+	y = 2;
+	TextColor(Red);
+	GotoXY(x, y++);
+	cout << " _  _  _  _  _  _  ____  __  _  _   __     ___  _  _   __   _  _  ___";
+	GotoXY(x, y++);
+	cout << "( )( )( )( )( \\( )(_  _)(  )( \\( ) / _)   / __)( \\( ) (^^) ( )/ )(  _)";
+	GotoXY(x, y++);
+	cout << " )__(  )()(  )  (   )(   )(  )  ( ( (/ \\  \\__ \\ )  (  /__\\ | / \\  ) _)";
+	GotoXY(x, y++);
+	cout << "(_)(_) \\__/ (_)\\_) (__) (__)(_)\\_) \\__/   (___/(_)\\_)(_)(_)(_)\\_)(___)";
+	y++;
+
+	TextColor(MainColor);
+	x = CornerX + WIDTHMAP + 3;
+	GotoXY(x, 1);
+	for (int i = 0; i <= 32; i++) {
+		if (i == 0 || i == 32)
+			cout << char(219);
+		else
+			cout << char(223);
+	}
 	for (int i = 2; i < CornerY + HEIGHTMAP; i++) {
 		GotoXY(x, i);
 		BackgroundColor(Yellow);
@@ -895,8 +1068,26 @@ void Game::DrawMap()
 	}
 	GotoXY(x, CornerY + HEIGHTMAP);
 	BackgroundColor(MainBackground);
-	for (int j = 0; j <= 32; j++)
+	for (int i = 0; i <= 32; i++)
 		cout << char(223);
+
+	BackgroundColor(Yellow);
+	x = CornerX + WIDTHMAP + 5;
+	y = 2;
+	GotoXY(x, y++);
+	cout << "    Y";
+	GotoXY(x, y++);
+	cout << "  .-^-.      zzzzzzzzz";
+	GotoXY(x, y++);
+	cout << " /     \\     .- ~ ~ -.";
+	GotoXY(x, y++);
+	cout << "()  |  ()   /   _ _   `.";
+	GotoXY(x, y++);
+	cout << " \\_   _/   /  /     \\   \\ ";
+	GotoXY(x, y++);
+	cout << "  |  |____/  /       \\   \\ ";
+	GotoXY(x, y++);
+	cout << "  \\_ _ _ _ _.'       /   / ";
 
 	BackgroundColor(Yellow);
 	x += 2;
@@ -1030,7 +1221,7 @@ void Game::GameOver() {
 	Sleep(1000);
 	ofstream file;
 	file.open("RANK.txt", ios::app);
-	file << namePlayer.back() << endl;
+	file << nameGame << endl;
 	file << level << endl;
 	file << score << endl;
 	file << currentTime << endl;

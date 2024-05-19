@@ -1,20 +1,46 @@
 ﻿#include "Menu.h"
 
 
+bool cmp(Save a, Save b)
+{
+	if (a.score != b.score)
+		return a.score > b.score;
+	return a.name < b.name;
+}
+
 
 int Continue()
 {
 	system("cls");
 
+	int x = 16, y = 0;
+	TextColor(Red);
+	GotoXY(x, y++);
+	cout << " __                                   __        _________          ";
+	GotoXY(x, y++);
+	cout << "/ /|                                 / /|      \xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB \\        ";
+	GotoXY(x, y++);
+	cout << "\xDB\xDB |         ______     ______       \xDB\xDB |     \xDB\xDB  ____\xDB\xDB\xDB |   ______   ______________     ______";
+	GotoXY(x, y++);
+	cout << "\xDB\xDB |        /     /\\   /     /\\   ___\xDB\xDB |    \xDB\xDB  /     \xDB\xDB/   /     /\\ /             /\\   /     /\\       ";
+	GotoXY(x, y++);
+	cout << "\xDB\xDB |       /\xDB\xDB\xDB\xDB\xDB\xDB  \\  \xDB\xDB\xDB\xDB\xDB\xDB  | /   \xDB\xDB |   \xDB\xDB  |     ______ \xDB\xDB\xDB\xDB\xDB\xDB  |\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB  \\ /\xDB\xDB\xDB\xDB\xDB\xDB  |";
+	GotoXY(x, y++);
+	cout << "\xDB\xDB |      /\xDB\xDB /  \xDB\xDB  \\ /    \xDB\xDB |/\xDB\xDB\xDB\xDB\xDB\xDB |   \xDB\xDB  |    /     /|/    \xDB\xDB |\xDB\xDB |  \xDB\xDB |   \xDB\xDB | \xDB\xDB    \xDB\xDB |";
+	GotoXY(x, y++);
+	cout << "\xDB\xDB |______\xDB\xDB |    \xDB\xDB |/\xDB\xDB\xDB\xDB\xDB\xDB\xDB |\xDB\xDB   \xDB\xDB |    \xDB\xDB  \\___\xDB\xDB\xDB\xDB\xDB\xDB//\xDB\xDB\xDB\xDB\xDB\xDB\xDB |\xDB\xDB |  \xDB\xDB |   \xDB\xDB |\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB_/";
+	GotoXY(x, y++);
+	cout << "\xDB\xDB/      /|\xDB\xDB \\  \xDB\xDB / \xDB\xDB    \xDB\xDB |\xDB\xDB   \xDB\xDB |     \xDB\xDB/      \xDB\xDB | \xDB\xDB    \xDB\xDB |\xDB\xDB |  \xDB\xDB |   \xDB\xDB | \xDB\xDB_______|";
+	GotoXY(x, y++);
+	cout << "\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB/  \xDB\xDB\xDB\xDB\xDB\xDB /   \xDB\xDB\xDB\xDB\xDB\xDB\xDB/  \xDB\xDB\xDB\xDB\xDB\xDB/       \xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB /   \xDB\xDB\xDB\xDB\xDB\xDB\xDB /\xDB\xDB/   \xDB\xDB/    \xDB\xDB/   \xDB\xDB\xDB\xDB\xDB\xDB\xDB/";
+
 	int width = 110;
-	int height = 25;
+	int height = 26;
 
-	int x = 10, y = 10;
-
-	GotoXY(x + width / 2 - 6, y - 2);
-	cout << "LOAD GAME";
+	x = 10, y = 10;
 
 	BackgroundColor(Yellow);
+	TextColor(Grey);
 	GotoXY(x, y);
 	for (int i = 1; i <= width; i++) {
 		if (i == 1 || i == width)
@@ -64,9 +90,15 @@ int Continue()
 		file >> tmp.score;
 		file.ignore();
 		getline(file, tmp.time);
-		if (!load.empty() && load.back().name == tmp.name)
-			load.back() = tmp;
-		else
+		bool check = true;
+		for (Save& save : load) {
+			if (save.name == tmp.name) {
+				save = tmp;
+				check = false;
+				break;
+			}
+		}
+		if (check)
 			load.push_back(tmp);
 	}
 	file.close();
@@ -75,7 +107,7 @@ int Continue()
 	bool quit = false;
 	int cursorPos = 0;
 	do {
-		for (int i = 0; i < load.size(); i++) {
+		for (int i = 0; i < min(load.size(), 23); i++) {
 			if (i == cursorPos)
 				TextColor(Pink);
 			else
@@ -97,7 +129,7 @@ int Continue()
 				cursorPos--;
 			break;
 		case 's':
-			if (cursorPos < load.size() - 1)
+			if (cursorPos < min(load.size(), 23) - 1)
 				cursorPos++;
 			break;
 		case '\x1B':
@@ -114,9 +146,10 @@ int Continue()
 void Rank()
 {
 	system("cls");
+	TextColor(Red);
 
 	int width = 110;
-	int height = 25;
+	int height = 26;
 
 	int x = 45, y = 0;
 
@@ -144,6 +177,7 @@ void Rank()
 	x -= 35;
 	y++;
 	BackgroundColor(Yellow);
+	TextColor(Grey);
 	GotoXY(x, y);
 	for (int i = 1; i <= width; i++) {
 		if (i == 1 || i == width)
@@ -193,14 +227,22 @@ void Rank()
 		file >> tmp.score;
 		file.ignore();
 		getline(file, tmp.time);
-		if (!save.empty() && save.back().name == tmp.name)
-			save.back() = tmp;
-		else
+		bool check = true;
+		for (Save& rank : save) {
+			if (rank.name == tmp.name) {
+				rank = tmp;
+				check = false;
+				break;
+			}
+		}
+		if (check)
 			save.push_back(tmp);
 	}
+
 	file.close();
 	save.pop_back();
-	for (int i = 0; i < save.size(); i++) {
+	sort(save.begin(), save.end(), cmp);
+	for (int i = 0; i < min(save.size(), 23); i++) {
 		GotoXY(x, y + i);
 		cout << i + 1 << ". " << save[i].name;
 		GotoXY(x + 35, y + i);
@@ -322,87 +364,134 @@ void About()
 			break;
 	}
 }
-void Setting()
+void Setting(std::thread& music)
 {
 	system("color F0");
 	system("cls");
 	HideCursor();
-	int x = 10, y = 1;
-	GotoXY(x, y++);
-	cout << "  __  __  _  _  ____  __  _  _  _  _  ___    ____  _  _  ___     __   __   __  __  ___  ___ ";
-	GotoXY(x, y++);
-	cout << " / _)/  \\( \\( )(_  _)(  )( \\( )( )( )(  _)  (_  _)( )( )(  _)   / _) (  ) (  \\/  )(  _)(__ )";
-	GotoXY(x, y++);
-	cout << "( (_( () ))  (   )(   )(  )  (  )()(  ) _)    )(   )__(  ) _)  ( (/\\ /__\\  )    (  ) _) (_/ ";
-	GotoXY(x, y++);
-	cout << " \\__)\\__/(_)\\_) (__) (__)(_)\\_) \\__/ (___)   (__) (_)(_)(___)   \\__/(_)(_)(_/\\/\\_)(___) (_) ";
-	GotoXY(x, y++);
-	cout << "--------------------------------------------------------------------------------------------\n";
-	GotoXY(x, y++);
-	cout << " _    _  ___  __    __  __  __  __  ___    ____  __      __  _  _  ___      __   __   __  __  ___ ";
-	GotoXY(x, y++);
-	cout << "( \\/\\/ )(  _)(  )  / _)/  \\(  \\/  )(  _)  (_  _)/  \\    /  \\( )( )(  ,)    / _) (  ) (  \\/  )(  _)";
-	GotoXY(x, y++);
-	cout << " \\    /  ) _) )(__( (_( () ))    (  ) _)    )( ( () )  ( () ))()(  )  \\   ( (/\\ /__\\  )    (  ) _)";
-	GotoXY(x, y++);
-	cout << "  \\/\\/  (___)(____)\\__)\\__/(_/\\/\\_)(___)   (__) \\__/    \\__/ \\__/ (_)\\_)   \\__/(_)(_)(_/\\/\\_)(___)";
-	GotoXY(x, y++);
-	cout << " ___  _  _  __    ___ ";
-	GotoXY(x, y++);
-	cout << "(  ,)( )( )(  )  (  _)";
-	GotoXY(x, y++);
-	cout << " )  \\ )()(  )(__  ) _)";
-	GotoXY(x, y++);
-	cout << "(_)\\_)\\__/ (____)(___)";
-	GotoXY(x, y++);
-	cout << "- YOU HAVE TO PASS 3 LEVELS TO COMPLETE THE GAME.";
-	GotoXY(x, y++);
-	cout << "- SNAKE RUNS FASTER FOR EACH LEVEL PASSED.";
-	GotoXY(x, y++);
-	cout << "- TO PASS THE LEVEL, SNAKE NEED TO EAT 8, 16, 24 FOOD.";
-	GotoXY(x, y++);
-	cout << "- THE SNAKE REMAINS THE LENGTH OF 6 WHEN PASSED THE LEVEL.";
-	GotoXY(x, y++);
-	cout << " _  _  __  _    _    ____  __     ___  __     __   _  _  ___ ";
-	GotoXY(x, y++);
-	cout << "( )( )/  \\( \\/\\/ )  (_  _)/  \\   (  ,\\(  )   (  ) ( \\/ )(__ )";
-	GotoXY(x, y++);
-	cout << " )__(( () )\\    /     )( ( () )   ) _/ )(__  /__\\  \\  /  (_/ ";
-	GotoXY(x, y++);
-	cout << "(_)(_)\\__/  \\/\\/     (__) \\__/   (_)  (____)(_)(_)(__/   (_) ";
-	GotoXY(x, y++);
-	cout << "- PRESS THE 'A', 'W', 'S', 'D' KEYS OR 'ARROW_LEFT', 'ARROW_UP', 'ARROW_DOWN', 'ARROW_RIGHT' KEYS";
-	GotoXY(x, y++);
-	cout << "  TO MOVE THE SNAKE LEFT, UP, DOWN AND RIGHT.";
-	GotoXY(x, y++);
-	cout << "- PRESS THE 'T' TO LOAD THE FILE.";
-	GotoXY(x, y++);
-	cout << "- PRESS THE 'T' TO LOAD THE FILE.";
-	GotoXY(x, y++);
-	cout << " ___  ___   ___  ___  ___     __   _  _  _  _    _ _   ___  _  _    ____  __       ";
-	GotoXY(x, y++);
-	cout << "(  ,\\(  ,) (  _)/ __)/ __)   (  ) ( \\( )( \\/ )  ( ) ) (  _)( \\/ )  (_  _)/  \\      ";
-	GotoXY(x, y++);
-	cout << " ) _/ )  \\  ) _)\\__ \\\\__ \\   /__\\  )  (  \\  /    )  \\  ) _) \\  /     )( ( () )     ";
-	GotoXY(x, y++);
-	cout << "(_)  (_)\\_)(___)(___/(___/  (_)(_)(_)\\_)(__/    (_)\\_)(___)(__/     (__) \\__/      ";
-	GotoXY(x, y++);
-	cout << " ___   ___  ____  _  _  ___   _  _    ____  _  _  ___    __  __  ___  __  __  _  _ ";
-	GotoXY(x, y++);
-	cout << "(  ,) (  _)(_  _)( )( )(  ,) ( \\( )  (_  _)( )( )(  _)  (  \\/  )(  _)(  \\/  )( )( )";
-	GotoXY(x, y++);
-	cout << " )  \\  ) _)  )(   )()(  )  \\  )  (     )(   )__(  ) _)   )    (  ) _) )    (  )()( ";
-	GotoXY(x, y++);
-	cout << "(_)\\_)(___) (__)  \\__/ (_)\\_)(_)\\_)   (__) (_)(_)(___)  (_/\\/\\_)(___)(_/\\/\\_) \\__/ ";
 
-	while (true) {
+	int width = 90;
+	int height = 24;
+	int x = 20;
+	int y = 6;
+	BackgroundColor(Yellow);
+	TextColor(Grey);
+	GotoXY(x, y);
+	for (int i = 1; i <= width; i++) {
+		if (i == 1 || i == width)
+			cout << char(219);
+		else
+			cout << char(223);
+
+	}
+	for (int i = 1; i <= height; i++) {
+		GotoXY(x, y + i);
+		for (int j = 1; j <= width; j++) {
+			if (j == 1 || j == width)
+				cout << char(219);
+			else
+				cout << ' ';
+		}
+	}
+	GotoXY(x + 1, y + height);
+	for (int i = 1; i < width - 1; i++)
+		cout << char(220);
+	GotoXY(x + 1, y + 6);
+	for (int i = 1; i < width - 1; i++) {
+		cout << char(220);
+	}
+
+	x += 14;
+	y++;
+	TextColor(Red);
+	GotoXY(x, y++);
+	cout << "       ___  __     __   _  _   __  __  _  _  ___  __   __  ___";
+	GotoXY(x, y++);
+	cout << "      (  ,\\(  )   (  ) ( \\/ ) (  \\/  )( )( )/ __)(  ) / _)(__ )";
+	GotoXY(x, y++);
+	cout << "       ) _/ )(__  /__\\  \\  /   )    (  )()( \\__ \\ )( ( (_  (_/ ";
+	GotoXY(x, y++);
+	cout << "      (_)  (____)(_)(_)(__/   (_/\\/\\_) \\__/ (___/(__) \\__) (_)";
+
+
+
+	int cursor = 0;
+	bool quit = false;
+	while (!quit) {
+		x = 53;
+		y = 15;
+		if (cursor == 0) {
+			TextColor(Red);
+			GotoXY(x, y++);
+			cout << " _     _  _  ___  ___ ";
+			GotoXY(x, y++);
+			cout << "( \\   ( \\/ )(  _)/ __)";
+			GotoXY(x, y++);
+			cout << " ) )   \\  /  ) _)\\__ \\";
+			GotoXY(x, y++);
+			cout << "(_/   (__/  (___)(___/";
+
+			y += 3;
+			TextColor(Grey);
+			GotoXY(x, y++);
+			cout << "       _  _  __ ";
+			GotoXY(x, y++);
+			cout << "      ( \\( )/  \\ ";
+			GotoXY(x, y++);
+			cout << "       )  (( () )";
+			GotoXY(x, y++);
+			cout << "      (_)\\_)\\__/ ";
+			GotoXY(x, y++);
+		}
+		else {
+			TextColor(Grey);
+			GotoXY(x, y++);
+			cout << "       _  _  ___  ___ ";
+			GotoXY(x, y++);
+			cout << "      ( \\/ )(  _)/ __)";
+			GotoXY(x, y++);
+			cout << "       \\  /  ) _)\\__ \\";
+			GotoXY(x, y++);
+			cout << "      (__/  (___)(___/";
+
+			y += 3;
+			TextColor(Red);
+			GotoXY(x, y++);
+			cout << " _     _  _  __ ";
+			GotoXY(x, y++);
+			cout << "( \\   ( \\( )/  \\ ";
+			GotoXY(x, y++);
+			cout << " ) )   )  (( () )";
+			GotoXY(x, y++);
+			cout << "(_/   (_)\\_)\\__/ ";
+		}
+		
 		char input = tolower(_getch());
-		if (input == '\x1B')
+		switch (input) {
+		case 'w':
+			if (cursor == 1)
+				cursor--;
 			break;
+		case 's':
+			if (cursor == 0)
+				cursor++;
+			break;
+		case '\x1B':
+			quit = true;
+			break;
+		case '\r':
+			if (cursor == 0) {
+				music = std::thread(PlayMusic);
+			}
+			else {
+				music = std::thread(StopMusic);
+			}
+			break;
+		}
 	}
 }
 
-int Menu(int cursorPos)
+int Menu(int cursorPos, std::thread& music)
 {
 	system("color F0");
 	system("cls");
@@ -549,21 +638,21 @@ int Menu(int cursorPos)
 			case 1:
 				val = Continue();
 				if (val == -1)
-					return Menu(cursorPos);
+					return Menu(cursorPos, music);
 				else
 					return val;
 				break;
 			case 2:
 				Rank();
-				return Menu(cursorPos);
+				return Menu(cursorPos, music);
 				break;
 			case 3:
 				About();
-				return Menu(cursorPos);
+				return Menu(cursorPos, music);
 				break;
 			case 4:
-				Setting();
-				return Menu(cursorPos);
+				Setting(music);
+				return Menu(cursorPos, music);
 				break;
 			case 5:
 				quit = true;

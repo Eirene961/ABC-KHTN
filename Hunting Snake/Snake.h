@@ -46,6 +46,7 @@ struct Snake
 	vector<Point> tail;
 	bool dead;
 	bool stunned;
+	bool eatingSound;
 
 	Snake() {
 		pos = { 0, 0 };
@@ -55,6 +56,7 @@ struct Snake
 		tail.push_back({ 0, 0 });
 		dead = false;
 		stunned = false;
+		eatingSound = false;
 	}
 
 	friend ifstream& operator >> (ifstream& file, Snake& snake) {
@@ -157,12 +159,10 @@ struct Snake
 
 		if (pos.x < 0 || pos.x >= WIDTHMAP || pos.y < 0 || pos.y >= HEIGHTMAP) {
 			dead = true;
-			cout << "MAP";
 		}
 		for (int i = 1; i < tail.size() - 1; i++) {
 			if (tail[i] == pos && dir != STOP) {
 				dead = true;
-				cout << "TAIL";
 			}
 		}
 	}
