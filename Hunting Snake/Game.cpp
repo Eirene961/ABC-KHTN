@@ -839,8 +839,8 @@ bool Game::Logic() {
 	if (snake->pos == fruit->pos && gate == false) {
 		score += 10;
 		snake->eatingSound = true;
-		GotoXY(CornerX + WIDTHMAP + 12, CornerY + 3);
-		TextColor(MainColor);
+		GotoXY(CornerX + WIDTHMAP + 14, CornerY + 3);
+		TextColor(Red);
 		BackgroundColor(Yellow);
 		cout << score << "   ";
 		BackgroundColor(MainBackground);
@@ -902,6 +902,25 @@ bool Game::Logic() {
 		}
 	}
 	Teleport();
+	TextColor(Red);
+	BackgroundColor(Yellow);
+	if (snake->stunned == true) {
+		GotoXY(CornerX + WIDTHMAP + 7, 30);
+		cout << "YOUR SNAKE IS STUNNED!";
+		GotoXY(CornerX + WIDTHMAP + 7, 31);
+		cout << "EAT THE FRUIT TO RETURN";
+		GotoXY(CornerX + WIDTHMAP + 7, 32);
+		cout << "TO NORMAL!";
+	}
+	else {
+		GotoXY(CornerX + WIDTHMAP + 7, 30);
+		cout << "YOUR SNAKE IS NORMAL!   ";
+		GotoXY(CornerX + WIDTHMAP + 7, 31);
+		cout << "                        ";
+		GotoXY(CornerX + WIDTHMAP + 7, 32);
+		cout << "                        ";
+	}
+
 	snake->eatingSound = false;
 	return false;
 }
@@ -1043,13 +1062,13 @@ void Game::DrawInstruction()
 	y = 2;
 	TextColor(Red);
 	GotoXY(x, y++);
-	cout << " _  _  _  _  _  _  ____  __  _  _   __     ___  _  _   __   _  _  ___";
+	cout << "   _  _  _  _  _  _  ____  __  _  _   __     ___  _  _   __   _  _  ___ ";
 	GotoXY(x, y++);
-	cout << "( )( )( )( )( \\( )(_  _)(  )( \\( ) / _)   / __)( \\( ) (^^) ( )/ )(  _)";
+	cout << "  ( )( )( )( )( \\( )(_  _)(  )( \\( ) / _)   / __)( \\( ) (^^) ( )/ )(  _) ";
 	GotoXY(x, y++);
-	cout << " )__(  )()(  )  (   )(   )(  )  ( ( (/ \\  \\__ \\ )  (  /__\\ | / \\  ) _)";
+	cout << "   )__(  )()(  )  (   )(   )(  )  ( ( (/ \\  \\__ \\ )  (  /__\\ | / \\  ) _) ";
 	GotoXY(x, y++);
-	cout << "(_)(_) \\__/ (_)\\_) (__) (__)(_)\\_) \\__/   (___/(_)\\_)(_)(_)(_)\\_)(___)";
+	cout << "  (_)(_) \\__/ (_)\\_) (__) (__)(_)\\_) \\__/   (___/(_)\\_)(_)(_)(_)\\_)(___) ";
 	y++;
 
 	TextColor(MainColor);
@@ -1079,6 +1098,7 @@ void Game::DrawInstruction()
 		cout << char(223);
 
 	BackgroundColor(Yellow);
+	TextColor(Red);
 	x = CornerX + WIDTHMAP + 5;
 	y = 2;
 	GotoXY(x, y++);
@@ -1107,20 +1127,31 @@ void Game::DrawInstruction()
 	GotoXY(x, CornerY + 4);
 	cout << "TARGET: " << game.target;
 
-	GotoXY(104, 22);
-	cout << "W: Move Up";
-	GotoXY(104, 23);
-	cout << "S: Move Down";
-	GotoXY(104, 24);
-	cout << "A: Move Left";
-	GotoXY(104, 25);
-	cout << "D: Move Right";
-	GotoXY(104, 26);
-	cout << "P: Pause Game";
-	GotoXY(104, 27);
-	cout << " : Save Game";
-	GotoXY(104, 28);
-	cout << " : Load Right";
+	y = CornerY + 6;
+	GotoXY(x, y++);
+	cout << "------------------------";
+	GotoXY(x, y++);
+	cout << "     W: MOVE UP";
+	GotoXY(x, y++);
+	cout << "     S: MOVE DOWN";
+	GotoXY(x, y++);
+	cout << "     A: MOVE LEFT";
+	GotoXY(x, y++);
+	cout << "     D: MOVE RIGHT";
+	GotoXY(x, y++);
+	cout << "     P: PAUSE GAME";
+	GotoXY(x, y++);
+	cout << "     HAVE FUN AND LUCK";
+	GotoXY(x, y++);
+	cout << "------------------------";
+	y++;
+	GotoXY(x, y++);
+	cout << "EAT THE FRUIT TO";
+	GotoXY(x, y++);
+	cout << "PASS THE LEVEL";
+	y++;
+	GotoXY(x, y++);
+	cout << "------------------------";
 }
 
 
