@@ -32,8 +32,11 @@ void Insert(vector<int>& v, int x) {
 void EatingSound()
 {
 	while (true) {
-		if (game.snake->eatingSound == true)
-			PlayEatingSound();
+		if (game.snake->eatingSound == true) {
+			thread eatingSound(PlayEatingSound);
+			if (eatingSound.joinable())
+				eatingSound.join();
+		}
 	}
 }
 
@@ -733,7 +736,7 @@ bool Game::Pause()
 {
 
 	int width = 19;
-	int height = 8;
+	int height = 6;
 	int x = CornerX + WIDTHMAP / 3 + 5;
 	int y = CornerY + HEIGHTMAP / 4 + 2;
 
@@ -766,12 +769,9 @@ bool Game::Pause()
 	GotoXY(x + 1, y + 4);
 	for (int i = 1; i < width - 1; i++)
 		cout << char(196);
-	GotoXY(x + 1, y + 6);
-	for (int i = 1; i < width - 1; i++)
-		cout << char(196);
 	
 
-	vector<string> selections = { "CONTINUE ", "SAVE GAME", "MUSIC    ", "EXIT     " };
+	vector<string> selections = { "CONTINUE ", "SAVE GAME", "EXIT     " };
 	bool quit = false;
 	int cursorPos = 0;
 	do {
@@ -798,6 +798,7 @@ bool Game::Pause()
 				cursorPos++;
 			break;
 		case '\r':
+			bool check = false;
 			switch (cursorPos) {
 			case 0:
 				return true;
@@ -809,8 +810,14 @@ bool Game::Pause()
 				cout << "SUCCESS!";
 				break;
 			case 2:
-				break;
-			case 3:
+				for (string name : nameSave) {
+					if (name == nameGame) {
+						check = true;
+						break;
+					}
+				}
+				if (!check)
+					namePlayer.pop_back();
 				quit = true;
 				break;
 			}

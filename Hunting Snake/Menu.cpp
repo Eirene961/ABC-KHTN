@@ -1,6 +1,7 @@
 ﻿#include "Menu.h"
 
 
+
 bool cmp(Save a, Save b)
 {
 	if (a.score != b.score)
@@ -482,10 +483,10 @@ void Setting()
 			break;
 		case '\r':
 			if (cursor == 0) {
-
+				PlayMusic();
 			}
 			else {
-
+				StopMusic();
 			}
 			break;
 		}

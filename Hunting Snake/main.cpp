@@ -4,10 +4,7 @@
 int main() {
     system("color F0");
 
-    std::thread eatingSound(EatingSound);
-    std::thread music;
-    setVolume(0x7FFF);
-    music = std::thread(PlayMusic);
+    std::thread music(PlayMusic);
 
     ofstream load("LOADGAME.txt");
     load.close();
@@ -16,7 +13,7 @@ int main() {
 
     StartGame();
 
-    eatingSound.join();
+    StopMusic();
     music.join();
     return 0;
 }
