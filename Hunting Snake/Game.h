@@ -188,7 +188,7 @@ struct Game
 	void DrawMonster();
 	void GameOver();
 };
-void StartGame(std::thread& music);
+void StartGame();
 
 
 #endif

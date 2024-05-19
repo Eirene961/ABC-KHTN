@@ -376,14 +376,14 @@ bool DrawLevel_05(bool playContinue)
 
 
 
-void StartGame(std::thread& music)
+void StartGame()
 {
 	srand(time(NULL));
 	FixConsoleWindow();
 	SetConsoleWindow(WIDTHCONSOLE, HEIGHTCONSOLE);
 	MoveCenter();
 	int ans;
-	while ((ans = Menu(0, music)) != -2) {
+	while ((ans = Menu(0)) != -2) {
 		if (ans == -1) {
 			game.Reset();
 			game.score = 0;
@@ -1077,7 +1077,7 @@ void Game::DrawInstruction()
 	GotoXY(x, y++);
 	cout << "    Y";
 	GotoXY(x, y++);
-	cout << "  .-^-.      zzzzzzzzz";
+	cout << "  .-^-.     zzzzzzzzzz";
 	GotoXY(x, y++);
 	cout << " /     \\     .- ~ ~ -.";
 	GotoXY(x, y++);

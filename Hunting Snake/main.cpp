@@ -6,15 +6,15 @@ int main() {
 
     std::thread eatingSound(EatingSound);
     std::thread music;
-    music = std::thread(PlayMusic);
     setVolume(0x7FFF);
+    music = std::thread(PlayMusic);
 
     ofstream load("LOADGAME.txt");
     load.close();
     ofstream rank("RANK.txt");
     rank.close();
 
-    StartGame(music);
+    StartGame();
 
     eatingSound.join();
     music.join();

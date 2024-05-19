@@ -342,21 +342,22 @@ void About()
 
 	y += 2;
 	GotoXY(x, y++);
-	cout << " ___  ___   ___  ___  ___     __   _  _  _  _    _ _   ___  _  _    ____  __       ";
+	cout << " ___  ___   ___  ___  ___    ___  ___   __    ____  __       ";
 	GotoXY(x, y++);
-	cout << "(  ,\\(  ,) (  _)/ __)/ __)   (  ) ( \\( )( \\/ )  ( ) ) (  _)( \\/ )  (_  _)/  \\      ";
+	cout << "(  ,\\(  ,) (  _)/ __)/ __)  (  _)/ __) / _)  (_  _)/  \\      ";
 	GotoXY(x, y++);
-	cout << " ) _/ )  \\  ) _)\\__ \\\\__ \\   /__\\  )  (  \\  /    )  \\  ) _) \\  /     )( ( () )     ";
+	cout << " ) _/ )  \\  ) _)\\__ \\\\__ \\   ) _)\\__ \\( (_     )( ( () )     ";
 	GotoXY(x, y++);
-	cout << "(_)  (_)\\_)(___)(___/(___/  (_)(_)(_)\\_)(__/    (_)\\_)(___)(__/     (__) \\__/      ";
+	cout << "(_)  (_)\\_)(___)(___/(___/  (___)(___/ \\__)   (__) \\__/      ";
 	GotoXY(x, y++);
-	cout << " ___   ___  ____  _  _  ___   _  _    ____  _  _  ___    __  __  ___  __  __  _  _ ";
+	cout << " ___   ___  ____  _  _  ___   _  _    ____  _  _  ___    __  __  ___  _  _  _  _ ";
 	GotoXY(x, y++);
-	cout << "(  ,) (  _)(_  _)( )( )(  ,) ( \\( )  (_  _)( )( )(  _)  (  \\/  )(  _)(  \\/  )( )( )";
+	cout << "(  ,) (  _)(_  _)( )( )(  ,) ( \\( )  (_  _)( )( )(  _)  (  \\/  )(  _)( \\( )( )( )";
 	GotoXY(x, y++);
-	cout << " )  \\  ) _)  )(   )()(  )  \\  )  (     )(   )__(  ) _)   )    (  ) _) )    (  )()( ";
+	cout << " )  \\  ) _)  )(   )()(  )  \\  )  (     )(   )__(  ) _)   )    (  ) _) )  (  )()( ";
 	GotoXY(x, y++);
-	cout << "(_)\\_)(___) (__)  \\__/ (_)\\_)(_)\\_)   (__) (_)(_)(___)  (_/\\/\\_)(___)(_/\\/\\_) \\__/ ";
+	cout << "(_)\\_)(___) (__)  \\__/ (_)\\_)(_)\\_)   (__) (_)(_)(___)  (_/\\/\\_)(___)(_)\\_) \\__/ ";
+
 
 	while (true) {
 		char input = tolower(_getch());
@@ -364,7 +365,7 @@ void About()
 			break;
 	}
 }
-void Setting(std::thread& music)
+void Setting()
 {
 	system("color F0");
 	system("cls");
@@ -481,17 +482,17 @@ void Setting(std::thread& music)
 			break;
 		case '\r':
 			if (cursor == 0) {
-				music = std::thread(PlayMusic);
+
 			}
 			else {
-				music = std::thread(StopMusic);
+
 			}
 			break;
 		}
 	}
 }
 
-int Menu(int cursorPos, std::thread& music)
+int Menu(int cursorPos)
 {
 	system("color F0");
 	system("cls");
@@ -638,21 +639,21 @@ int Menu(int cursorPos, std::thread& music)
 			case 1:
 				val = Continue();
 				if (val == -1)
-					return Menu(cursorPos, music);
+					return Menu(cursorPos);
 				else
 					return val;
 				break;
 			case 2:
 				Rank();
-				return Menu(cursorPos, music);
+				return Menu(cursorPos);
 				break;
 			case 3:
 				About();
-				return Menu(cursorPos, music);
+				return Menu(cursorPos);
 				break;
 			case 4:
-				Setting(music);
-				return Menu(cursorPos, music);
+				Setting();
+				return Menu(cursorPos);
 				break;
 			case 5:
 				quit = true;

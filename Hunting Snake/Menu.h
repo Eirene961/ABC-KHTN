@@ -49,8 +49,8 @@ bool cmp(Save a, Save b);
 int Continue();
 void Rank();
 void About();
-void Setting(std::thread& music);
-int Menu(int cursorPos, std::thread& music);
+void Setting();
+int Menu(int cursorPos);
 
 
 
