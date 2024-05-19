@@ -1231,6 +1231,7 @@ void Game::DrawMonster() {
 
 void Game::GameOver() {
 	int cnt = 15;
+	BackgroundColor(MainBackground);
 	while (cnt != 0) {
 		for (int i = 1; i < snake->tail.size(); i++) {
 			if (cnt % 2 == 0) {
