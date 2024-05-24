@@ -6,6 +6,7 @@
 #include "Console.h"
 #include "Menu.h"
 #include "Snake.h"
+#include "Sound.h"
 #include <fstream>
 #include <string.h>
 #include <sstream>
@@ -20,6 +21,7 @@ using namespace std;
 #define Target_lv5 390
 bool BinarySearch(vector<int> v, int l, int r, int x);
 void Insert(vector<int>& v, int x);
+void EatingSound();
 int Level_01(Snake*& snake);
 int Level_02(Snake*& snake);
 int Level_03(Snake*& snake);
@@ -47,8 +49,11 @@ struct Game
 	vector<pair<Point,Point>> teleport;
 	vector<Point> poison;
 
+	string nameGame;
 	vector<string> namePlayer;
 	vector<string> nameSave;
+
+	bool music;
 
 	Game() {
 		snake = new Snake;
@@ -60,6 +65,7 @@ struct Game
 		gate = false;
 		time = 0;
 		color = 0;
+		music = true;
 	}
 	~Game() {
 		delete snake;
@@ -117,10 +123,6 @@ struct Game
 			game.poison.push_back(point);
 		}
 
-		char _;
-		file >> _;
-
-
 		return file;
 	}
 
@@ -172,11 +174,11 @@ struct Game
 	bool SnakeMeetMonster();
 	bool FruitMeetMonster();
 	bool CheckNamePlayer(string name);
-	bool CheckNameSave(string name);
 	void LoadGame(string name);
 	bool Pause();
 	bool Logic();
 	void DrawMap();
+	void DrawInstruction();
 	void DrawTeleport();
 	void DrawSnake();
 	void DrawMonster();

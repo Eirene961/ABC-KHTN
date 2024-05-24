@@ -3,9 +3,11 @@
 
 
 #include "Console.h"
+#include "Sound.h"
 #include <iostream>
 #include <conio.h>
 #include <vector>
+#include <algorithm>
 #include <fstream>
 #include <string>
 #include <mmsystem.h>
@@ -42,6 +44,7 @@ struct Save {
 	string time;
 };
 
+bool cmp(Save a, Save b);
 
 int Continue();
 void Rank();
