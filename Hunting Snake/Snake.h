@@ -48,6 +48,9 @@ struct Snake
 	bool stunned;
 	bool eatingSound;
 
+	void Move();
+	void Update();
+
 	Snake() {
 		pos = { 0, 0 };
 		cell = "2312021523120204231202102312021223120226";
@@ -85,9 +88,6 @@ struct Snake
 		file << snake.stunned << endl;
 		return file;
 	}
-
-	void Move();
-	void Update();
 };
 struct Fruit
 {

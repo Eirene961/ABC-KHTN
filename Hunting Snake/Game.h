@@ -123,10 +123,6 @@ struct Game
 			game.poison.push_back(point);
 		}
 
-		char _;
-		file >> _;
-
-
 		return file;
 	}
 
